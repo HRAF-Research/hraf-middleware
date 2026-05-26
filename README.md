@@ -31,3 +31,10 @@ command = VLMCommand(
     confidence=0.92,
     raw_response="Move past the table leg while avoiding the human hand."
 )
+
+--- USER REPORT ---
+ID: USR001 | Name: Guneet Kaur | Age: 25
+ID: USR002 | Name: John Doe | Age: 42
+-------------------
+Total Users: 2
+Average Age: 33.5
