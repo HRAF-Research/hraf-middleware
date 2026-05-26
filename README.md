@@ -20,9 +20,10 @@ state = RobotState(
 
 # Attempting to mutate a property will raise an AttributeError:
 # state.position = (4.0, 5.0, 6.0)  # BLOCKED (Thread-Safe)
+```
 
-
-2. VLMCommand (Vision-Language Model Output)
+### 2. VLMCommand (Vision-Language Model Output)
+```python
 from hraf.states import VLMCommand
 
 # Capturing instruction sets from the high-level AI model
@@ -32,12 +33,18 @@ command = VLMCommand(
     confidence=0.92,
     raw_response="Move past the table leg while avoiding the human hand."
 )
+```
 
+## Expected Pipeline Output Preview
 
-3. Generated User Report Output (Text Snapshot)
+Below is a snippet of the generated data processing output from yesterday's task.
+
+### 3. Generated User Report Output (Text Snapshot)
+```text
 --- USER REPORT ---
 ID: USR001 | Name: Guneet Kaur | Age: 25
 ID: USR002 | Name: John Doe | Age: 42
 -------------------
 Total Users: 2
 Average Age: 33.5
+```
