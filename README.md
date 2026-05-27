@@ -48,3 +48,10 @@ ID: USR002 | Name: John Doe | Age: 42
 Total Users: 2
 Average Age: 33.5
 ```
+
+---
+
+## Day 3 Validation: Middleware Exception Pipeline
+Below is the execution stream of the custom exception handling architecture tracking an out-of-bounds physical coordinate constraint breach:
+
+![HRAF Safety Pipeline Output](src/hraf/day-3_output_snippet.png)
