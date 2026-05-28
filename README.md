@@ -48,3 +48,16 @@ ID: USR002 | Name: John Doe | Age: 42
 Total Users: 2
 Average Age: 33.5
 ```
+
+---
+
+## Day 3 Validation: Middleware Exception Pipeline
+Below is the execution stream of the custom exception handling architecture tracking an out-of-bounds physical coordinate constraint breach:
+
+![HRAF Safety Pipeline Output](src/hraf/day-3_output_snippet.png)
+
+
+## Day 4 Validation: Core Telemetry & Command Unit Test Suite
+Below is the execution stream of the automated pytest verification matrix tracking data structure validation, type enforcement, immutability barriers, and boundary limits:
+
+<img width="1918" height="277" alt="DAY-4_Output_snippet" src="https://github.com/user-attachments/assets/f0e4708d-5646-4c62-a74d-463f22406ada" />
