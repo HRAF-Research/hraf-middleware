@@ -2,7 +2,7 @@ import pytest
 from pydantic import ValidationError
 from src.hraf.models import RobotState, VLMCommand
 from src.hraf.exceptions import (
-    HRAFException,
+    HRAFBaseError,
     HardwareFaultError,
     WorkspaceViolationError,
     NetworkTimeoutError,
@@ -14,8 +14,8 @@ from src.hraf.exceptions import (
 # =========================================================================
 
 def test_base_hraf_exception():
-    with pytest.raises(HRAFException):
-        raise HRAFException("Base error")
+    with pytest.raises(HRAFBaseError):
+        raise HRAFBaseError("Base error")
 
 def test_hardware_fault_error():
     with pytest.raises(HardwareFaultError):

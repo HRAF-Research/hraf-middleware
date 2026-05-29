@@ -1,4 +1,3 @@
-%%writefile src/hraf/models.py
 from dataclasses import dataclass
 from typing import List, Literal
 from pydantic import BaseModel, Field

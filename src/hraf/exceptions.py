@@ -19,3 +19,16 @@ class WorkspaceViolationError(HRAFBaseError):
 class KinematicFeasibilityError(HRAFBaseError):
     """Raised when a joint configuration is mathematically unreachable."""
     pass
+  
+class HardwareFaultError(HRAFBaseError):  
+    """Raised when a hardware component reports a critical failure."""  
+    pass 
+class NetworkTimeoutError(HRAFBaseError):  
+    """Raised when a VLM or network request times out."""  
+    pass 
+class NetworkTimeoutError(HRAFBaseError):  
+    """Raised when a VLM or network request times out."""  
+    pass 
+class InvalidCommandError(HRAFBaseError):  
+    """Raised when a commanded action fails validation requirements."""  
+    pass 
