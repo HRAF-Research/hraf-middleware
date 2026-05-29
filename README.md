@@ -67,5 +67,5 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 
 <img width="775" height="220" alt="Day 5_output_snippet" src="https://github.com/user-attachments/assets/0ffc901f-a20b-4147-8a20-74cad166825b" />
 
-All test passing (ptest green)
+## All test passing (pytest green)
 <img width="1632" height="207" alt="all test passed" src="https://github.com/user-attachments/assets/e6f7a73c-9b8b-4f03-85cf-78e0c7ca8b71" />
