@@ -66,3 +66,7 @@ Below is the execution stream of the automated pytest verification matrix tracki
 Below is the automated pytest output verifying our Stage 3 validation rules. This test execution stream demonstrates our defensive middleware pipeline successfully intercepting adversarial inputs (including type corruptions, out-of-range confidence thresholds, empty waypoint lists, and missing parameters) at the schema gate level:
 
 <img width="775" height="220" alt="Day 5_output_snippet" src="https://github.com/user-attachments/assets/0ffc901f-a20b-4147-8a20-74cad166825b" />
+
+All test passing (ptest green)
+<img width="852" height="114" alt="all test passing" src="https://github.com/user-attachments/assets/9eb0899f-564d-4137-8358-380ca8af65f5" />
+
