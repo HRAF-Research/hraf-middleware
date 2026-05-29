@@ -62,7 +62,7 @@ Below is the execution stream of the automated pytest verification matrix tracki
 
 <img width="1918" height="277" alt="DAY-4_Output_snippet" src="https://github.com/user-attachments/assets/f0e4708d-5646-4c62-a74d-463f22406ada" />
 
-Validation: Pydantic v2 Schema Gatekeeper
+## Day 5 Validation: Pydantic v2 Schema Gatekeeper
 Below is the automated pytest output verifying our Stage 3 validation rules. This test execution stream demonstrates our defensive middleware pipeline successfully intercepting adversarial inputs (including type corruptions, out-of-range confidence thresholds, empty waypoint lists, and missing parameters) at the schema gate level:
 
 <img width="775" height="220" alt="Day 5_output_snippet" src="https://github.com/user-attachments/assets/0ffc901f-a20b-4147-8a20-74cad166825b" />
