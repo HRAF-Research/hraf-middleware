@@ -69,3 +69,15 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 
 ## All test passing (pytest green)
 <img width="1632" height="207" alt="all test passed" src="https://github.com/user-attachments/assets/e6f7a73c-9b8b-4f03-85cf-78e0c7ca8b71" />
+
+===================================================================================================
+
+## 🗓️ Week 2: Concurrency, Threads & The GIL
+
+### Day 1: Thread Basics & OS Scheduling
+* **What I Studied:** Studied how threads work and learned about the **Global Interpreter Lock (GIL)**.
+* **What I Coded:** Wrote a Python script inside `threads_demo.ipynb` that runs 3 threads at the exact same time.
+* **What I Observed:** Noticed that the outputs from the threads shuffle and mix together in a random order every time the code runs. This happens because the Operating System's Thread Scheduler controls the exact timing, not our code.
+
+**Deliverables:**
+* Lab Report: [threads_demo.pdf](https://github.com/user-attachments/files/28462305/threads_demo.pdf)
