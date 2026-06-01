@@ -80,4 +80,4 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * **What I Observed:** Noticed that the outputs from the threads shuffle and mix together in a random order every time the code runs. This happens because the Operating System's Thread Scheduler controls the exact timing, not our code.
 
 **Deliverables:**
-* Lab Report: [threads_demo.pdf](https://github.com/user-attachments/files/28462305/threads_demo.pdf)
+* PDF File: [threads_demo.pdf](https://github.com/user-attachments/files/28462305/threads_demo.pdf)
