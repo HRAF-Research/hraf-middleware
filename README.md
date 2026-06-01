@@ -70,7 +70,7 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 ## All test passing (pytest green)
 <img width="1632" height="207" alt="all test passed" src="https://github.com/user-attachments/assets/e6f7a73c-9b8b-4f03-85cf-78e0c7ca8b71" />
 
-===================================================================================================
+============================================================================================
 
 ## 🗓️ Week 2: Concurrency, Threads & The GIL
 
