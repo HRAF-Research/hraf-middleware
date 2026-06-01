@@ -66,3 +66,18 @@ Below is the execution stream of the automated pytest verification matrix tracki
 Below is the automated pytest output verifying our Stage 3 validation rules. This test execution stream demonstrates our defensive middleware pipeline successfully intercepting adversarial inputs (including type corruptions, out-of-range confidence thresholds, empty waypoint lists, and missing parameters) at the schema gate level:
 
 <img width="775" height="220" alt="Day 5_output_snippet" src="https://github.com/user-attachments/assets/0ffc901f-a20b-4147-8a20-74cad166825b" />
+
+## All test passing (pytest green)
+<img width="1632" height="207" alt="all test passed" src="https://github.com/user-attachments/assets/e6f7a73c-9b8b-4f03-85cf-78e0c7ca8b71" />
+
+============================================================================================
+
+## 🗓️ Week 2: Concurrency, Threads & The GIL
+
+### Day 1: Thread Basics & OS Scheduling
+* **What I Studied:** Studied how threads work and learned about the **Global Interpreter Lock (GIL)**.
+* **What I Coded:** Wrote a Python script inside `threads_demo.ipynb` that runs 3 threads at the exact same time.
+* **What I Observed:** Noticed that the outputs from the threads shuffle and mix together in a random order every time the code runs. This happens because the Operating System's Thread Scheduler controls the exact timing, not our code.
+
+**Deliverables:**
+* PDF File: [threads_demo.pdf](https://github.com/user-attachments/files/28462305/threads_demo.pdf)
