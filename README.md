@@ -82,7 +82,7 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 **Deliverables:**
 * PDF File: [threads_demo.pdf](https://github.com/user-attachments/files/28462305/threads_demo.pdf)
 
-### Tuesday: Race Conditions & Thread Synchronization
+### Day 2: Race Conditions
 * **Created a Race Condition:** Set up two threads to increase a shared counter 10,000 times at the same time.
 * **Observed Data Errors:** Ran the script 10 times and watched the final total change every time, never reaching the expected 20,000 because threads overwrote each other.
 * **Fixed with a Lock:** Added `threading.Lock()` to force the threads to wait in line, making sure the final count hits exactly 20,000 every single run.
