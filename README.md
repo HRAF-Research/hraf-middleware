@@ -94,9 +94,6 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 
 ### Day 3: Thread Event & Signaling
 * **Studied Event Basics:** Learned how `threading.Event` works using `set()`, `clear()`, `wait()`, and `is_set()` to pause threads without wasting CPU power.
-* **Built a Stop Event Pattern:** Created a background thread that runs continuously and checks a flag to shut down safely when ordered.
-* **Built a Ready Event Pattern:** Synchronized two threads so that Thread A stops completely and waits until Thread B signals that it is ready to proceed.
-* **Created a Sensor Simulation:** Programmed a sensor thread that updates data and pulses an event signal to instantly wake up a processing loop.
 
 **Deliverables:**
 * [Stop Event Pattern Notebook](./stop_event_pattern.ipynb)
