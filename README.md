@@ -99,3 +99,15 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * [Stop Event Pattern Notebook](./stop_event_pattern.ipynb)
 * [Ready Event Synchronization Notebook](./ready_event.ipynb)
 * [Sensor Middleware Simulation Notebook](./simulation.ipynb)
+
+
+### Day 4: Thread-Safe Queues & Latency Management
+* **Studied Queue Basics:** Learned how `queue.Queue` works using `put()`, `get()`, `get_nowait()`, `task_done()`, `join()`, and `maxsize` to share data safely between threads.
+* **Built a Balanced Pipeline:** Created a system where a producer sends sensor data and a consumer processes it at the exact same speed.
+* **Tested Latency Accumulation:** Proved that if a producer sends data faster than a consumer can read it, the queue fills up with old, lagging data.
+* **Implemented Bounded Flush Semantics:** Programmed a limited queue that clears out and drops old data packets so the consumer always uses the newest information.
+  
+**Deliverables:**
+* [Balanced Pipeline Notebook](./balanced_pipeline.ipynb)
+* [Latency Accumulation Notebook](./latency_accumulation.ipynb)
+* [Bounded Queue Flush Notebook](./bounded_queue_flush.ipynb)
