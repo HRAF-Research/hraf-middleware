@@ -79,8 +79,6 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * **What I Coded:** Wrote a Python script inside `threads_demo.ipynb` that runs 3 threads at the exact same time.
 * **What I Observed:** Noticed that the outputs from the threads shuffle and mix together in a random order every time the code runs. This happens because the Operating System's Thread Scheduler controls the exact timing, not our code.
 
-**Deliverables:**
-* PDF File: [threads_demo.pdf](https://github.com/user-attachments/files/28462305/threads_demo.pdf)
 
 ### Day 2: Race Conditions
 * **Created a Race Condition:** Set up two threads to increase a shared counter 10,000 times at the same time.
@@ -88,17 +86,9 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * **Fixed with a Lock:** Added `threading.Lock()` to force the threads to wait in line, making sure the final count hits exactly 20,000 every single run.
 * **Added Code Comments:** Wrote clear notes explaining how the computer's read-modify-write steps caused the race condition and why the lock fixed it.
 
-**Deliverable:** 
-* PDF File: [race_condition.pdf](https://github.com/user-attachments/files/28502197/race_condition.pdf)
-
 
 ### Day 3: Thread Event & Signaling
 * **Studied Event Basics:** Learned how `threading.Event` works using `set()`, `clear()`, `wait()`, and `is_set()` to pause threads without wasting CPU power.
-
-**Deliverables:**
-* [Stop Event Pattern Notebook](./stop_event_pattern.ipynb)
-* [Ready Event Synchronization Notebook](./ready_event.ipynb)
-* [Sensor Middleware Simulation Notebook](./simulation.ipynb)
 
 
 ### Day 4: Thread-Safe Queues & Latency Management
@@ -107,7 +97,3 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * **Tested Latency Accumulation:** Proved that if a producer sends data faster than a consumer can read it, the queue fills up with old, lagging data.
 * **Implemented Bounded Flush Semantics:** Programmed a limited queue that clears out and drops old data packets so the consumer always uses the newest information.
   
-**Deliverables:**
-* [Balanced Pipeline Notebook](./balanced_pipeline.ipynb)
-* [Latency Accumulation Notebook](./latency_accumulation.ipynb)
-* [Bounded Queue Flush Notebook](./bounded_queue_flush.ipynb)
