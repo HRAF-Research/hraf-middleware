@@ -98,4 +98,9 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * **Built a Balanced Pipeline:** Created a system where a producer sends sensor data and a consumer processes it at the exact same speed.
 * **Tested Latency Accumulation:** Proved that if a producer sends data faster than a consumer can read it, the queue fills up with old, lagging data.
 * **Implemented Bounded Flush Semantics:** Programmed a limited queue that clears out and drops old data packets so the consumer always uses the newest information.
+
   
+### Day 5: Full Producer-Consumer Demo & Latency Log
+* **Build:** Created a two-thread system where a slow AI camera sends commands every 0.5s and a fast motor checks them 100 times per second.
+* **Use:** Set up a `Queue(maxsize=1)` so the system throws away old, unread commands and instantly replaces them with the newest update.
+* **Log:** Recorded creation and reading times to prove that our pipeline sends information almost instantly with zero data lag.
