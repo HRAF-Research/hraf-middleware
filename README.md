@@ -1,4 +1,4 @@
-# hraf-middleware
+# Week 1
 
 This repository contains the production-ready middleware pipeline and data structures for the Hybrid Robot Action Framework (HRAF), built using the Single Responsibility Principle (SRP) and strict Python type hinting.
 
