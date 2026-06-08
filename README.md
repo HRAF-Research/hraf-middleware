@@ -104,3 +104,13 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * **Build:** Created a two-thread system where a slow AI camera sends commands every 0.5s and a fast motor checks them 100 times per second.
 * **Use:** Set up a `Queue(maxsize=1)` so the system throws away old, unread commands and instantly replaces them with the newest update.
 * **Log:** Recorded creation and reading times to prove that our pipeline sends information almost instantly with zero data lag.
+
+============================================================================================
+## 🗓️ Week 3: System Design Thinking & Software Architecture Patterns 
+
+### Day 1: Block Diagrams & Interfaces
+* Read Section 4 of the HRAF Proposal document and built the HRAF Data Flow loop
+* For each box, wrote down its inputs (including data type and source), outputs (including data type and destination), and error states
+* Drew the full data flow on paper as well as digital: Simulator → VLM → HARM → IK → Simulator as a labeled diagram.
+
+**Deliverable** [HRAF Data flow.pdf](https://github.com/user-attachments/files/28704625/HRAF.Data.flow.pdf)
