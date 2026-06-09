@@ -113,4 +113,8 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * For each box, wrote down its inputs (including data type and source), outputs (including data type and destination), and error states
 * Drew the full data flow on paper as well as digital: Simulator → VLM → HARM → IK → Simulator as a labeled diagram.
 
-**Deliverable** [HRAF Data flow.pdf](https://github.com/user-attachments/files/28704625/HRAF.Data.flow.pdf)
+
+## Day 2: System-1 / System-2 Architecture 
+* Studied Kahneman’s dual-process theory comparing System-1 (fast, reactive) and System-2 (slow, deliberate).
+* Read the VLA-Perf paper (arXiv:2602.18397) to apply human dual-system traits to robot control modules
+* Wrote a note identifying the fast IK loop as System-1 and the slow VLM brain as System-2 and Explained why coupling them slows the robot down and why they must be decoupled to fix the latency problem
