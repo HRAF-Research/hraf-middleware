@@ -1,0 +1,14 @@
+*What is System-1 in HRAF?*
+In the Hallucination-Resilient Agentic VLM Framework (HRAF), System-1 represents the low-level, high-frequency physical execution and reflex layer, specifically driven by the IK Execution Layer and the underlying Physics Engine (Simulator). Operating at an intensive frequency of 100 Hz to 240 Hz, this system functions as the robot's mechanical reflexes. System-1 handles real-time trajectory updates, joint-space mathematical conversions, and immediate physical collision avoidance. It operates deterministically and reactively, ensuring that the physical machine maintains constant, safe, and fluid motion without pausing to interpret semantic goals.
+
+*What is System-2 in HRAF?*
+System-2 is the high-level, low-frequency cognitive layer instantiated by the VLM Cognitive Engine (AI Brain). Operating asynchronously at a deliberate 5 Hz to 10 Hz, this layer represents the deep reasoning, planning, and contextual understanding of the framework.System-2 interprets natural language tasks, performs scene re-assessment. It is slow, highly analytical, and responsible for calculating what the robot should do next.
+
+*Why Must They Be Decoupled? (The Latency Problem)* 
+The big problem in robotics is the massive speed mismatch between the slow, heavy AI brain (~5 Hz) and the super-fast mechanical body (~100+ Hz).  
+If you couple them (meaning the fast robot arm is forced to stop and wait for the slow AI brain to finish thinking before making its next micro-movement), the entire robot slows down to a crawl.Instead of moving smoothly, the robot would move at only 5 Hz. This creates huge delays (100 to 200 milliseconds of lag between every tiny movement). In the real world, this lag causes the robot to shake violently, makes it impossible to stop in time if a human walks by, and prevents it from reacting to changes in the room.
+How HRAF solves this:
+HRAF uses an Async State Bridge to completely disconnect (decouple) the two loops.  
+The Brain (System-2) takes its time thinking at 5 Hz, dropping its new target instructions into a shared memory buffer whenever it finishes a thought.  
+The Body (System-1) doesn't wait around. It checks that memory buffer 100+ times per second, instantly grabbing the most recent valid instruction and executing it flawlessly. 
+By separating them, the robot gets to be highly intelligent without ever losing its lightning-fast physical reflexes
