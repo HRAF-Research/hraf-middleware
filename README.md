@@ -118,3 +118,9 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Studied Kahneman’s dual-process theory comparing System-1 (fast, reactive) and System-2 (slow, deliberate).
 * Read the VLA-Perf paper (arXiv:2602.18397) to apply human dual-system traits to robot control modules
 * Wrote a note identifying the fast IK loop as System-1 and the slow VLM brain as System-2 and Explained why coupling them slows the robot down and why they must be decoupled to fix the latency problem
+
+
+## Day 3: Finite State Machines', 2100 
+* Studied FSM concepts including **states, transitions, guards (conditions), and actions (side effects).
+* Modeled the **HARM module** as a Finite State Machine with states: **IDLE, VALIDATING, FEASIBILITY_CHECK, EXECUTING, RECOVERY, and FAULT**.
+* Drew a complete FSM diagram and documented all state transitions, specifying the triggering event and action performed for each transition
