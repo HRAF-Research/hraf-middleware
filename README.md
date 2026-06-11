@@ -124,3 +124,10 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Studied FSM concepts including **states, transitions, guards (conditions), and actions (side effects).
 * Modeled the **HARM module** as a Finite State Machine with states: **IDLE, VALIDATING, FEASIBILITY_CHECK, EXECUTING, RECOVERY, and FAULT**.
 * Drew a complete FSM diagram and documented all state transitions, specifying the triggering event and action performed for each transition
+
+
+## Day 4: Failure Mode Analysis
+* Identified three failure modes for each core module, separating them into the VLM, HARM, IK Solver, and State Bridge.
+* Documented the specific trigger event, the downstream system effect, and the recovery method for every failure mode.
+* Classified all system errors to determine which issues can be recovered automatically versus which ones are completely unrecoverable.
+* Specified exactly which critical failures trip an emergency system stop and require a human operator to step in and fix the issue.
