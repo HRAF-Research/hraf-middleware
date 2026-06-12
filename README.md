@@ -131,3 +131,9 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Documented the specific trigger event, the downstream system effect, and the recovery method for every failure mode.
 * Classified all system errors to determine which issues can be recovered automatically versus which ones are completely unrecoverable.
 * Specified exactly which critical failures trip an emergency system stop and require a human operator to step in and fix the issue.
+
+
+## Day 5: Interface Design for ADCA & HARM
+* Designed Python interface stubs as abstract base classes to define structural code contracts before implementation.
+* Created the ADCA blueprint detailing the initialization variables, loop frequencies, runtime controls, and state bridge retrieval.
+* Created the HARM blueprint specifying text validation inputs returning structured results and error recovery paths returning fallback commands.
