@@ -137,3 +137,12 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Designed Python interface stubs as abstract base classes to define structural code contracts before implementation.
 * Created the ADCA blueprint detailing the initialization variables, loop frequencies, runtime controls, and state bridge retrieval.
 * Created the HARM blueprint specifying text validation inputs returning structured results and error recovery paths returning fallback commands.
+
+
+## 🗓️ Week 4: Python asyncio: Event Loop, Coroutines & Tasks 
+
+### Day 1: Event Loop & Coroutines 
+* Studied how the async event loop runs coroutines and manages tasks on a single thread.
+* Built a Python coroutine using asyncio.sleep(0.3) to simulate real VLM API delay.
+* Tested and compared running 5 VLM calls back-to-back versus all at once using asyncio.gather().
+* Measured and documented a 1.20-second speedup, proving concurrency keeps the robot control loop from freezing.
