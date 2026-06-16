@@ -141,8 +141,14 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 
 ## 🗓️ Week 4: Python asyncio: Event Loop, Coroutines & Tasks 
 
-### Day 1: Event Loop & Coroutines 
+## Day 1: Event Loop & Coroutines 
 * Studied how the async event loop runs coroutines and manages tasks on a single thread.
 * Built a Python coroutine using asyncio.sleep(0.3) to simulate real VLM API delay.
 * Tested and compared running 5 VLM calls back-to-back versus all at once using asyncio.gather().
 * Measured and documented a 1.20-second speedup, proving concurrency keeps the robot control loop from freezing.
+
+## Day 2: Tasks & Cancellation
+* Studied how asyncio.create_task() launches background tasks so the main code keeps running immediately without waiting.
+* Learned how task.cancel() injects an asyncio.CancelledError to stop a running task right at its next pause point.
+* Built a continuous 100Hz robot tracking loop that catches cancellation to safely drop motor torque and lock hardware brakes.
+* Coded a timeout guard using asyncio.wait_for() to safely catch hanging network calls and instantly trigger fallback backup sensors.
