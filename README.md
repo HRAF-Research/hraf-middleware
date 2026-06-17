@@ -152,3 +152,8 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Learned how task.cancel() injects an asyncio.CancelledError to stop a running task right at its next pause point.
 * Built a continuous 100Hz robot tracking loop that catches cancellation to safely drop motor torque and lock hardware brakes.
 * Coded a timeout guard using asyncio.wait_for() to safely catch hanging network calls and instantly trigger fallback backup sensors.
+
+## Day 3: asyncio.Queue & Async Producer-Consumer
+* Studied asyncio.Queue vs queue.Queue, confirming that async queues use non-blocking coroutine suspension instead of thread-locking primitives.
+* Rebuilt the Producer-Consumer demo pipeline into a single-threaded asynchronous framework using concurrent producer and consumer coroutines.
+* Verified that the high-frequency IK consumer operates at its own independent cadence, pulling data from the state bridge without being stalled by VLM processing delays.
