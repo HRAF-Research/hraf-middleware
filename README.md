@@ -157,3 +157,10 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Studied asyncio.Queue vs queue.Queue, confirming that async queues use non-blocking coroutine suspension instead of thread-locking primitives.
 * Rebuilt the Producer-Consumer demo pipeline into a single-threaded asynchronous framework using concurrent producer and consumer coroutines.
 * Verified that the high-frequency IK consumer operates at its own independent cadence, pulling data from the state bridge without being stalled by VLM processing delays.
+
+
+## Day 4: asyncio vs. threading Decision Matrix
+* Studied Concurrency Choices: Learned to use single-threaded asyncio for fast network/VLM calls and threading as the fallback for heavy, blocking hardware tasks.
+* Identified Loop Freezes: Discovered that calling a standard synchronous function directly inside async code completely freezes the single system thread, cutting off critical safety signals.
+* Explored loop.run_in_executor(), which offloads slow, blocking legacy code to a background thread pool so the main loop can keep breathing.
+* Built the ADCA Bridge: Programmed a script that handles an async VLM camera check while running a heavy 1.5-second blocking MoveIt 2 calculation in the background, proving the main control loop stays 100% active and responsive.
