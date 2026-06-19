@@ -164,3 +164,10 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Identified Loop Freezes: Discovered that calling a standard synchronous function directly inside async code completely freezes the single system thread, cutting off critical safety signals.
 * Explored loop.run_in_executor(), which offloads slow, blocking legacy code to a background thread pool so the main loop can keep breathing.
 * Built the ADCA Bridge: Programmed a script that handles an async VLM camera check while running a heavy 1.5-second blocking MoveIt 2 calculation in the background, proving the main control loop stays 100% active and responsive.
+
+
+## Day 5: Async Latency Measurement 
+* Created a benchmark with a 100Hz IK loop and a simulated VLM inference task running concurrently using asyncio.
+* Logged IK loop timestamps with time.perf_counter() and used deadline scheduling to maintain a 10ms target period.
+* Confirmed that the IK loop maintained ~100Hz while VLM inference was running in parallel.
+* Generated timing plots and statistics, showing only minor jitter and no significant control-loop delays.
