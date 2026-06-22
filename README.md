@@ -171,3 +171,12 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Logged IK loop timestamps with time.perf_counter() and used deadline scheduling to maintain a 10ms target period.
 * Confirmed that the IK loop maintained ~100Hz while VLM inference was running in parallel.
 * Generated timing plots and statistics, showing only minor jitter and no significant control-loop delays.
+
+
+## 🗓️ Week 5: Latency Engineering: Measurement, Profiling & Optimisation 
+
+## Day 1: Latency Measurement Fundamentals
+* Studied `time.perf_counter()`, `time.process_time()`, and `time.monotonic()` for measuring different types of time delays.
+* Learned why average latency can hide slow cases and how P50, P95, and P99 show latency spikes.
+* Studied warm-up effects in API calls and why the first few requests are removed before measuring actual performance.
+* Measured 50 `asyncio.sleep(0)` calls, plotted the latency, and analyzed async event loop scheduling overhead.
