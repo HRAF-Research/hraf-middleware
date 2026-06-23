@@ -180,3 +180,10 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Learned why average latency can hide slow cases and how P50, P95, and P99 show latency spikes.
 * Studied warm-up effects in API calls and why the first few requests are removed before measuring actual performance.
 * Measured 50 `asyncio.sleep(0)` calls, plotted the latency, and analyzed async event loop scheduling overhead.
+
+
+## Day 2: LatencyProfiler Class
+* Architected Standalone Profiler: Built LatencyProfiler inside src/hraf/profiler.py using only numpy and matplotlib for framework-wide utility.
+* Implemented Percentile Math: Added clean tracking for p50, p95, p99, mean, and standard deviation using numpy.percentile().
+* Validated Tail Latencies: Verified calculations using 100 log-normal simulation points to accurately map worst-case latency spikes.
+* Added CSV Data Export: Integrated export_csv() to save raw timing entries to disk for reproducible research benchmarks.
