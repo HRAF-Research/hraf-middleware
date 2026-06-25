@@ -194,3 +194,10 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Isolated Network Initialization Noise: Discarded the first 3 samples of each sweep as warm-up cycles to ensure calibration and protect downstream statistical data from initial connection spikes.
 * Captured Temporal Traffic Variances: Conducted multi-window testing across both afternoon (off-peak) and evening (peak load) periods to analyze real-world API server congestion.
 * Mapped ADCA Safety Boundaries: Extracted P50, P95, and P99 percentiles along with dual-window distribution charts to establish worst-case latency boundaries for control loop decoupling.
+
+
+## Day 4: Hot-Path Code Profiling
+* **Inspected Image Encoding Pipeline:** Used cProfile and line_profiler to review the execution time of the image-to-text conversion script line by line.
+* **Isolated Primary Function Bottleneck:** Discovered that saving images to memory buffers via standard library tools consumed **78.5%** of total system processing cycles.
+* **Tested Multiple Optimization Vectors:** Evaluated compression settings, image downsampling, and library variations side by side to reduce processing overhead.
+* **Slashed Processing Latency:** Applied JPEG compression adjustments to drop overall execution times by **50.5%**, keeping the loop fast enough for real-time control.
