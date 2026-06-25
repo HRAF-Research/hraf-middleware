@@ -187,3 +187,10 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Implemented Percentile Math: Added clean tracking for p50, p95, p99, mean, and standard deviation using numpy.percentile().
 * Validated Tail Latencies: Verified calculations using 100 log-normal simulation points to accurately map worst-case latency spikes.
 * Added CSV Data Export: Integrated export_csv() to save raw timing entries to disk for reproducible research benchmarks.
+
+
+## Day 3: VLM API Latency Study
+* Executed Cloud Infrastructure Sweeps: Ran 33 live API requests across Tier L2 (Gemini 1.5 Flash) and Tier L3 (Groq Llama3) to evaluate cloud-to-edge middleware performance.
+* Isolated Network Initialization Noise: Discarded the first 3 samples of each sweep as warm-up cycles to ensure calibration and protect downstream statistical data from initial connection spikes.
+* Captured Temporal Traffic Variances: Conducted multi-window testing across both afternoon (off-peak) and evening (peak load) periods to analyze real-world API server congestion.
+* Mapped ADCA Safety Boundaries: Extracted P50, P95, and P99 percentiles along with dual-window distribution charts to establish worst-case latency boundaries for control loop decoupling.
