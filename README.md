@@ -196,7 +196,7 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Mapped ADCA Safety Boundaries: Extracted P50, P95, and P99 percentiles along with dual-window distribution charts to establish worst-case latency boundaries for control loop decoupling.
 
 
-## Day 4: Hot-Path Code Profiling
+## Day 4: Code Profiling
 * **Inspected Image Encoding Pipeline:** Used cProfile and line_profiler to review the execution time of the image-to-text conversion script line by line.
 * **Isolated Primary Function Bottleneck:** Discovered that saving images to memory buffers via standard library tools consumed **78.5%** of total system processing cycles.
 * **Tested Multiple Optimization Vectors:** Evaluated compression settings, image downsampling, and library variations side by side to reduce processing overhead.
