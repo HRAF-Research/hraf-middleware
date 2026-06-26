@@ -201,3 +201,9 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * **Isolated Primary Function Bottleneck:** Discovered that saving images to memory buffers via standard library tools consumed **78.5%** of total system processing cycles.
 * **Tested Multiple Optimization Vectors:** Evaluated compression settings, image downsampling, and library variations side by side to reduce processing overhead.
 * **Slashed Processing Latency:** Applied JPEG compression adjustments to drop overall execution times by **50.5%**, keeping the loop fast enough for real-time control.
+
+
+## Day 5: Latency Budget Design
+* Designed Two-Speed Control System: Mapped out the system to separate fast arm movements from slow cloud network delays. This keeps the robot moving smoothly even if the internet lags.
+* Calculated Arm Control Speed: Combined the 2 ms data bridge delay and the 10 ms movement calculation time. This allows the arm to safely update its path 83.33 times per second (83.33 Hz).
+* Computed Main Planning Rate: Added the worst-case 1500 ms cloud lag to the local delays, totaling 1512 ms. This means the robot receives fresh visual decisions from the cloud about 0.66 times per second (0.66 Hz).
