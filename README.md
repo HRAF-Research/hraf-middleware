@@ -229,7 +229,7 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Verified Fault Tolerance: Ran an adversarial test showing that when errors hit the loop, it logs warnings and continues running instead of crashing.
 
 
-### Day 4: IK Loop Coroutine
+## Day 4: IK Loop Coroutine
 * Built the High-Speed IK Core: Created a local loop running at a fast target speed of 100 tasks per second (100 Hz).
 * Defined Fallback Behaviors: Added logic to use fresh data when available, reuse the last valid plan with reduced confidence when stale, and hold position on initial bootup.
 * Verified Performance Velocity: Tracked precision timestamps to verify the loop maintains a stable rate of 95.63 Hz, satisfying the strict threshold.
