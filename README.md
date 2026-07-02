@@ -221,3 +221,15 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Built the Core State Bridge: Created a StateBridge communication manager using a 1-slot data queue (asyncio.Queue(maxsize=1)) and an alert flag (asyncio.Event).
 * Implemented Safety Methods: Developed functions to drop off new commands (put_command), safely read the latest command without freezing (get_latest_command), and check if data exists (has_command).
 * Completed Adversarial Testing Matrix: Tested the bridge under harsh conditions, verifying that rapid back-to-back inputs automatically overwrite old data, empty reads return a blank response instantly without hanging, and simultaneous reads handle data ownership safely.
+
+
+## Day 3: VLM Loop Coroutine
+* Built the Core VLM Loop: Created a continuous safe_vlm_loop function that runs at a steady pace of 2 tasks per second (2 Hz).
+* Enforced Graceful Degradation: Added try/except safety catchers to intercept cloud server timeouts (asyncio.TimeoutError), network API disconnects, and empty (None) camera frames.
+* Verified Fault Tolerance: Ran an adversarial test showing that when errors hit the loop, it logs warnings and continues running instead of crashing.
+
+
+### Day 4: IK Loop Coroutine
+* Built the High-Speed IK Core: Created a local loop running at a fast target speed of 100 tasks per second (100 Hz).
+* Defined Fallback Behaviors: Added logic to use fresh data when available, reuse the last valid plan with reduced confidence when stale, and hold position on initial bootup.
+* Verified Performance Velocity: Tracked precision timestamps to verify the loop maintains a stable rate of 95.63 Hz, satisfying the strict threshold.
