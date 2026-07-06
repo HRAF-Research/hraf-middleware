@@ -240,3 +240,11 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Logged Telemetry Timestamps: Captured precise clock ticks for all 60 VLM cloud calls and 2,850 local IK iterations to map system behavior.
 * Generated Dual-Timeline Plot: Produced a publication-ready figure mapping VLM calls as vertical lines against the continuous IK loop frequency.
 * Verified Real-Time Compliance: Proved that the local motor loop successfully maintained a stable rate of 95.0 Hz without dropping or dipping during cloud inference cycles.
+
+
+## 🗓️ Week 7: Safety-Critical Software Principles & Validation Design
+
+## **Day 1: Safety Principles Study**
+* Read Industry Safety Standards: Looked over the main ideas in Sections 1 and 3 of the IEC 61508 standard to learn the official rules for building safe softwar
+* Studied Core Safety Ideas: Learned how systems use multiple backup layers (defence-in-depth), safe default settings (fail-safe), and ways to stop a single broken part from breaking the whole machine.
+* Wrote Safety Note for HARM: Wrote a short half-page explanation on how the HARM module uses a 3-step check to catch errors and how it safely locks the robot arm in place if a major glitch happens.
