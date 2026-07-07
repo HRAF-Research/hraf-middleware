@@ -248,3 +248,9 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Read Industry Safety Standards: Looked over the main ideas in Sections 1 and 3 of the IEC 61508 standard to learn the official rules for building safe softwar
 * Studied Core Safety Ideas: Learned how systems use multiple backup layers (defence-in-depth), safe default settings (fail-safe), and ways to stop a single broken part from breaking the whole machine.
 * Wrote Safety Note for HARM: Wrote a short half-page explanation on how the HARM module uses a 3-step check to catch errors and how it safely locks the robot arm in place if a major glitch happens.
+
+
+## Day 2: Adversarial Test Suite Design
+- Designed 50 Adversarial Test Cases: Mapped out 10 distinct failure test cases for each of the 5 core AI hallucination categories (schema, workspace, kinematic, format, and object).
+- Defined System Pass Criteria: Established the exact injected fault parameters, expected module mitigation actions, and strict pass/fail rules for every test condition.
+- Completed Pre-Code Test Specification: Finished the official test specification document before writing any code, ensuring a strict Test-Driven Development workflow.
