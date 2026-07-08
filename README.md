@@ -251,6 +251,12 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 
 
 ## Day 2: Adversarial Test Suite Design
-- Designed 50 Adversarial Test Cases: Mapped out 10 distinct failure test cases for each of the 5 core AI hallucination categories (schema, workspace, kinematic, format, and object).
-- Defined System Pass Criteria: Established the exact injected fault parameters, expected module mitigation actions, and strict pass/fail rules for every test condition.
-- Completed Pre-Code Test Specification: Finished the official test specification document before writing any code, ensuring a strict Test-Driven Development workflow.
+* Designed 50 Adversarial Test Cases: Mapped out 10 distinct failure test cases for each of the 5 core AI hallucination categories (schema, workspace, kinematic, format, and object).
+* Defined System Pass Criteria: Established the exact injected fault parameters, expected module mitigation actions, and strict pass/fail rules for every test condition.
+* Completed Pre-Code Test Specification: Finished the official test specification document before writing any code, ensuring a strict Test-Driven Development workflow.
+
+
+## **Day 3: Property-Based Testing with Hypothesis**
+* Ran pip install hypothesis to add the testing library to the notebook workspace.
+* Learned how to use the @given decorator, data strategies (st.floats, st.text, st.lists), the assume() filter, and the note() debugging function.
+* Built a property-based test for the Stage 2 workspace check that creates random 3D coordinates and verifies that the HARM module always returns a valid, in-bounds waypoint.
