@@ -264,6 +264,6 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 
 ## **Day 4: Workspace Geometry Implementation**
 * Built the WorkspaceChecker class with is_reachable(point_3d) and the clip_to_boundary(point_3d) fail-safe filter.
-* Modeled the safety zone as a conservative $1.0\text{ m}$ sphere centered at (0, 0, 0) based on URDF joint length sums.
+* Modeled the safety zone as a conservative 1.0 m sphere centered at (0, 0, 0) based on URDF joint length sums.
 * Integrated a joint-range check to verify that all target pose angles stay within strict URDF limits.
 * Ran Wednesday's property-based tests to verify the class successfully handles 100 random boundary attacks.
