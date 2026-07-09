@@ -260,3 +260,10 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Ran pip install hypothesis to add the testing library to the notebook workspace.
 * Learned how to use the @given decorator, data strategies (st.floats, st.text, st.lists), the assume() filter, and the note() debugging function.
 * Built a property-based test for the Stage 2 workspace check that creates random 3D coordinates and verifies that the HARM module always returns a valid, in-bounds waypoint.
+
+
+## **Day 4: Workspace Geometry Implementation**
+* Built the WorkspaceChecker class with is_reachable(point_3d) and the clip_to_boundary(point_3d) fail-safe filter.
+* Modeled the safety zone as a conservative $1.0\text{ m}$ sphere centered at (0, 0, 0) based on URDF joint length sums.
+* Integrated a joint-range check to verify that all target pose angles stay within strict URDF limits.
+* Ran Wednesday's property-based tests to verify the class successfully handles 100 random boundary attacks.
