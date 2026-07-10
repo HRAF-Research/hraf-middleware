@@ -244,7 +244,7 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 
 ## 🗓️ Week 7: Safety-Critical Software Principles & Validation Design
 
-## **Day 1: Safety Principles Study**
+## Day 1: Safety Principles Study
 * Read Industry Safety Standards: Looked over the main ideas in Sections 1 and 3 of the IEC 61508 standard to learn the official rules for building safe softwar
 * Studied Core Safety Ideas: Learned how systems use multiple backup layers (defence-in-depth), safe default settings (fail-safe), and ways to stop a single broken part from breaking the whole machine.
 * Wrote Safety Note for HARM: Wrote a short half-page explanation on how the HARM module uses a 3-step check to catch errors and how it safely locks the robot arm in place if a major glitch happens.
@@ -256,14 +256,20 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Completed Pre-Code Test Specification: Finished the official test specification document before writing any code, ensuring a strict Test-Driven Development workflow.
 
 
-## **Day 3: Property-Based Testing with Hypothesis**
+## Day 3: Property-Based Testing with Hypothesis
 * Ran pip install hypothesis to add the testing library to the notebook workspace.
 * Learned how to use the @given decorator, data strategies (st.floats, st.text, st.lists), the assume() filter, and the note() debugging function.
 * Built a property-based test for the Stage 2 workspace check that creates random 3D coordinates and verifies that the HARM module always returns a valid, in-bounds waypoint.
 
 
-## **Day 4: Workspace Geometry Implementation**
+## Day 4: Workspace Geometry Implementation
 * Built the WorkspaceChecker class with is_reachable(point_3d) and the clip_to_boundary(point_3d) fail-safe filter.
 * Modeled the safety zone as a conservative 1.0 m sphere centered at (0, 0, 0) based on URDF joint length sums.
 * Integrated a joint-range check to verify that all target pose angles stay within strict URDF limits.
 * Ran Wednesday's property-based tests to verify the class successfully handles 100 random boundary attacks.
+
+
+## Day 5: Test Suite Implementation Documentation
+* Upgraded the 50 adversarial VLM case definitions from an abstract matrix into functional pytest test routines.
+* Segmented the testing suite layout into 5 distinct classes, separating the functional targets by individual VLM hallucination profiles.
+* Executed the unified verification suites against the active WorkspaceChecker class, resulting in 13 structural passes and 40 clean xfail designations for pending modules.
