@@ -273,3 +273,11 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Upgraded the 50 adversarial VLM case definitions from an abstract matrix into functional pytest test routines.
 * Segmented the testing suite layout into 5 distinct classes, separating the functional targets by individual VLM hallucination profiles.
 * Executed the unified verification suites against the active WorkspaceChecker class, resulting in 13 structural passes and 40 clean xfail designations for pending modules.
+
+
+## 🗓️ Week 8: Building the Full HARM Module
+
+## Day 1: Stage 1 — Stage 1 — Schema Validation
+* Built HARM Stage 1: Implemented validate(raw_response) to clean markdown, parse JSON, and validate it into a VLMCommand object.
+* Added Error Recovery: Logged validation errors, retried once using re_prompt(), and returned None if validation still failed.
+* Tested Stage 1: Ran all 10 adversarial schema test cases and achieved a 10/10 defensive score with the retry system.
