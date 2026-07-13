@@ -277,7 +277,7 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 
 ## 🗓️ Week 8: Building the Full HARM Module
 
-## Day 1: Stage 1 — Stage 1 — Schema Validation
+## Day 1: Stage 1 — Schema Validation
 * Built HARM Stage 1: Implemented validate(raw_response) to clean markdown, parse JSON, and validate it into a VLMCommand object.
 * Added Error Recovery: Logged validation errors, retried once using re_prompt(), and returned None if validation still failed.
 * Tested Stage 1: Ran all 10 adversarial schema test cases and achieved a 10/10 defensive score with the retry system.
