@@ -281,3 +281,9 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Built HARM Stage 1: Implemented validate(raw_response) to clean markdown, parse JSON, and validate it into a VLMCommand object.
 * Added Error Recovery: Logged validation errors, retried once using re_prompt(), and returned None if validation still failed.
 * Tested Stage 1: Ran all 10 adversarial schema test cases and achieved a 10/10 defensive score with the retry system.
+
+
+## Day 2: Stage 2 — Workspace Check
+* Added a geometric safety filter that checks every waypoint, clips unreachable coordinates back to physical boundaries, and logs the exact correction distance.
+* Deployed a metric to flag minor adjustments under $0.5\text{m}$ as low risk, while instantly triggering critical alerts for severe AI hallucinations over $0.5\text{m}$.
+* Ran the pipeline against 10 aggressive adversarial test cases, successfully achieving a perfect 10/10 pass rate by correcting or blocking all unsafe movements.
