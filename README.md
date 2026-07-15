@@ -290,6 +290,6 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 
 
 ## Day 3: Stage 3 — Kinematic Limits
-* Implemented URDF-Aligned Gate: Enforced the 2-DOF rr_arm.urdf joint limits (1.0 rad/s max) with a strict 0.8× safety ceiling 0.8\text{rad/s}$).
+* Implemented URDF-Aligned Gate: Enforced the 2-DOF rr_arm.urdf joint limits (1.0 rad/s max) with a strict 0.8× safety ceiling 0.8 rad/s.
 * Added Velocity Mitigation: Integrated a finite difference estimator ($\Delta\theta/\Delta t$) that automatically scales over-speed steps down by 0.5× using time expansion.
 * Validated 10 Trajectory Attacks: Achieved a flawless 10/10 pass rate across 10 adversarial cases (TC-KIN-021 to 030), correcting fixable paths and blocking extreme limit breaches.
