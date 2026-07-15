@@ -287,3 +287,9 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Added a geometric safety filter that checks every waypoint, clips unreachable coordinates back to physical boundaries, and logs the exact correction distance.
 * Deployed a metric to flag minor adjustments under $0.5\text{m}$ as low risk, while instantly triggering critical alerts for severe AI hallucinations over $0.5\text{m}$.
 * Ran the pipeline against 10 aggressive adversarial test cases, successfully achieving a perfect 10/10 pass rate by correcting or blocking all unsafe movements.
+
+
+Day 3: Stage 3 — Kinematic Limits
+* Implemented URDF-Aligned Gate: Enforced the 2-DOF rr_arm.urdf joint limits (1.0 rad/s max) with a strict 0.8× safety ceiling 0.8\text{rad/s}$).
+* Added Velocity Mitigation: Integrated a finite difference estimator ($\Delta\theta/\Delta t$) that automatically scales over-speed steps down by 0.5× using time expansion.
+* Validated 10 Trajectory Attacks: Achieved a flawless 10/10 pass rate across 10 adversarial cases (TC-KIN-021 to 030), correcting fixable paths and blocking extreme limit breaches.
