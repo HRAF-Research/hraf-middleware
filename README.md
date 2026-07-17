@@ -293,3 +293,15 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Implemented URDF-Aligned Gate: Enforced the 2-DOF rr_arm.urdf joint limits (1.0 rad/s max) with a strict 0.8× safety ceiling 0.8 rad/s.
 * Added Velocity Mitigation: Integrated a finite difference estimator ($\Delta\theta/\Delta t$) that automatically scales over-speed steps down by 0.5× using time expansion.
 * Validated 10 Trajectory Attacks: Achieved a flawless 10/10 pass rate across 10 adversarial cases (TC-KIN-021 to 030), correcting fixable paths and blocking extreme limit breaches.
+
+
+## Day 4: Conservative Fallback & Full Pipeline
+* Conservative Fallback: Generates a safe "hold" command at the current position if a catastrophic failure occurs.
+* Master HARM Class: Connects Stage 1 (Schema), Stage 2 (Workspace), and Stage 3 (Kinematics) into one sequential pipeline.
+* HARM Result Receipts: Logs diagnostic details (stage_failed, error_type, correction_applied, and catch_type) for every single run without returning any empty values.
+
+
+## Day 5: Full Adversarial Test Suite Run
+* Evaluated fifty diverse adversarial command inputs against the protective filtering modules to verify system resilience.
+* Computed overall catch efficiency by dividing intercepted and recovered anomalies by the total test size to confirm compliance with the baseline target.
+* Isolated uncorrected edge cases involving severe formatting crashes and extreme joint reversals to update the documented payload constraints.
