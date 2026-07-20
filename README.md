@@ -305,3 +305,11 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Evaluated fifty diverse adversarial command inputs against the protective filtering modules to verify system resilience.
 * Computed overall catch efficiency by dividing intercepted and recovered anomalies by the total test size to confirm compliance with the baseline target.
 * Isolated uncorrected edge cases involving severe formatting crashes and extreme joint reversals to update the documented payload constraints.
+
+
+## 🗓️ Week 9: HARM Integration with ADCA & The Construct RDS Testing
+
+## Day 1: HARM into ADCA VLM Loop
+* Integrated HARM Validation: Updated vlm_loop() to pass outputs from async_run_sat() into harm.validate() before forwarding safe commands to bridge.put_command().
+* Added Real-Time Logging: Tracked a HARMResult receipt for every VLM call to log intercepted, recovered, and fallback counts alongside latency metrics.
+* Verified Performance: Executed the 30-second integration test with HARM active, confirming zero timing regression (IK control loop maintained ~96 Hz with HARM validation averaging <0.3 ms).
