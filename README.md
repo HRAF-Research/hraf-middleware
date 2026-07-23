@@ -313,3 +313,21 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Integrated HARM Validation: Updated vlm_loop() to pass outputs from async_run_sat() into harm.validate() before forwarding safe commands to bridge.put_command().
 * Added Real-Time Logging: Tracked a HARMResult receipt for every VLM call to log intercepted, recovered, and fallback counts alongside latency metrics.
 * Verified Performance: Executed the 30-second integration test with HARM active, confirming zero timing regression (IK control loop maintained ~96 Hz with HARM validation averaging <0.3 ms).
+
+
+## Day 2: Real VLM Response Testing
+* Ran API calls on images from Gazebo environments E1 and E2, passing all responses through the HARM pipeline and logging HARMResult receipts.
+* Achieved a 42.0% catch rate (28.0% Stage 1 syntax fixes, 12.0% Stage 2/3 kinematic fixes, 2.0% safety fallbacks), with 58.0% clean passes.
+* Compared the 42.0% real-world rate to the 100% adversarial catch rate; real VLM calls mostly cause minor formatting glitches rather than intentional attack vectors.
+
+
+## Day 3: ROS 2 Node Wrapping
+* Created a Python wrapper that subscribes to /camera/image_raw, processes visual input using decoupled ADCA+HARM logic, and publishes output to vlm command.
+* Confirmed that safety validation works identically inside ROS 2 without changing the core ADCA+HARM algorithms.
+* Simulated sending a test image frame to /camera/image_raw and verified that /hraf/vlm_command correctly received the validated command payload (MOVE, waypoints, and HARM receipts).
+
+
+## Day 4: Integration Stress Test
+* Ran the complete ROS 2 pipeline continuously in The Construct RDS with the robot driving through environment E2 (SAT World).
+* Processed 297 VLM calls at a stable ~49.55 Hz IK loop rate with 0 crashes or exceptions logged.
+* Confirmed flat RAM usage (~110.25 MB) with 0 unbounded queue accumulation and active rotating log file management.
