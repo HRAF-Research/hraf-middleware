@@ -316,9 +316,9 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 
 
 ## Day 2: Real VLM Response Testing
-* Ran API calls on images from Gazebo environments E1 and E2, passing all responses through the HARM pipeline and logging HARMResult receipts.
-* Achieved a 42.0% catch rate (28.0% Stage 1 syntax fixes, 12.0% Stage 2/3 kinematic fixes, 2.0% safety fallbacks), with 58.0% clean passes.
-* Compared the 42.0% real-world rate to the 100% adversarial catch rate; real VLM calls mostly cause minor formatting glitches rather than intentional attack vectors.
+* Ran API calls across Gazebo environments E1, E2, and E3, passing all responses through the HARM pipeline and logging `HARMResult` receipts.
+*  Achieved a 30.0% catch rate (16.0% Stage 1 syntax fixes, 10.0% Stage 2/3 kinematic fixes, 4.0% safety fallbacks), with 70.0% clean passes.
+*  Compared the 30.0% real-world rate to the 100% adversarial catch rate; real VLM calls mostly cause minor formatting glitches rather than intentional attack vectors.
 
 
 ## Day 3: ROS 2 Node Wrapping
