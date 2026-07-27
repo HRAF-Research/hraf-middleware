@@ -336,3 +336,11 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 ## Day 5: Phase 3 Handoff Package
 * Wrote step-by-step documentation on how to instantiate, configure, and execute the ADCA+HARM middleware stack.
 * Packaged the core middleware stack, the 50-case adversarial test suite, and the latency profiler for baseline benchmarking against A* and NavGPT.
+
+
+## 🗓️ Week 10: ADCA Benchmarking: Single-Frequency vs. Dual-Frequency
+
+## Day 1: Baseline Implementation
+* Created a simple single-frequency pipeline where each VLM call runs synchronously and immediately triggers motor IK execution with no async handling.
+* Tied VLM inference, HARM safety validation, and IK motor calculations together in a single sequential loop.
+* Ran a 10-second baseline test to record the real IK rate, showing the motor speed dropped to ~3.27 Hz because it has to wait for VLM network delays.
