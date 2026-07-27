@@ -267,7 +267,7 @@ def test_schema_adversarial_suite(test_id, recovers_on_retry):
     stage1 = HARMStage1(vlm_client_fn=vlm_agent.generate_response)
 
     # Start the test process: call initial response
-     initial_response = vlm_agent.generate_response(prompt="Go to object.")
+    initial_response = vlm_agent.generate_response(prompt="Go to object.")
 
     # Run through structural schema validator pipeline
     validated_command = stage1.validate(initial_response)
@@ -1207,7 +1207,7 @@ def mock_vlm_reprompt(bad_raw, error_msg):
 harm_pipeline = HARM(mock_vlm_reprompt_fn=mock_vlm_reprompt)
 start_state = RobotState(positions=[0.0, 0.0], timestamp=0.0)
 
- @pytest.mark.parametrize("tc_id, raw_input, expected_catch", generate_50_test_cases())
+@pytest.mark.parametrize("tc_id, raw_input, expected_catch", generate_50_test_cases())
 def test_individual_harm_vectors(tc_id, raw_input, expected_catch):
     """Evaluates each adversarial vector as an independent test target without global state leaks."""
     cmd, receipt = harm_pipeline.validate(raw_input, start_state)
