@@ -114,176 +114,179 @@ if __name__ == "__main__":
     print(f"🎁 Final Engine Result Object: {repr(validated_output)}")
     print("="*50)
 
-# Commented out IPython magic to ensure Python compatibility.
-# %%writefile test_harm_stage1.py
-# import pytest
-# import json
-# import math
-# from typing import List, Optional, Literal
-# from pydantic import BaseModel, Field, ValidationError, field_validator
-# 
-# # --- 1. STRICT PYDANTIC SCHEMA DEFINITION ---
-# class VLMCommand(BaseModel):
-#     action: Literal["MOVE", "STOP", "HOLD"] = Field(..., description="Action directive keyword")
-#     waypoints: List[List[float]] = Field(..., description="List of 3D spatial points [X, Y, Z]", min_length=1)
-#     confidence: float = Field(..., description="AI confidence score between 0.0 and 1.0", ge=0.0, le=1.0)
-# 
-#     @field_validator("waypoints")
-#     @classmethod
-#     def validate_waypoint_dimensions(cls, v: List[List[float]]) -> List[List[float]]:
-#         """Ensures every single coordinate list element has exactly 3 spatial dimensions."""
-#         for wp in v:
-#             if len(wp) != 3:
-#                 raise ValueError("Each waypoint coordinate element must have exactly 3 dimensions [X, Y, Z].")
-#         return v
-# 
-# 
-# # --- 2. HARM STAGE 1 SAFETY VALVE CLASS ---
-# class HARMStage1:
-#     def __init__(self, vlm_client_fn=None):
-#         """Initializes the engine with an optional callback function to trigger the mock VLM."""
-#         self.vlm_client_fn = vlm_client_fn
-# 
-#     def _strip_markdown_fences(self, text: str) -> str:
-#         """Removes markdown code block formatting wrap characters (`json ... `) if present."""
-#         text = text.strip()
-#         if text.startswith("```"):
-#             lines = text.splitlines()
-#             if len(lines) >= 2 and lines[0].startswith("```"):
-#                 lines = lines[1:]
-#             if lines and lines[-1].strip() == "```":
-#                 lines = lines[:-1]
-#             text = "\n".join(lines).strip()
-#         return text
-# 
-#     def validate(self, raw_response: str) -> Optional[VLMCommand]:
-#         """Runs the clean-to-parse loop. Triggers a one-time re-prompt retry on fail."""
-#         try:
-#             # First clean attempt
-#             cleaned_text = self._strip_markdown_fences(raw_response)
-#             parsed_json = json.loads(cleaned_text)
-#             return VLMCommand.model_validate(parsed_json)
-#         except (json.JSONDecodeError, ValidationError) as error:
-#             error_msg = str(error).replace("\n", " ")
-# 
-#             # If no VLM simulation client callback function exists, block immediately
-#             if not self.vlm_client_fn:
-#                 return None
-# 
-#             # Construct standard, descriptive error prompt
-#             re_prompt_query = (
-#                 f"Your previous response was invalid because: {error_msg}. "
-#                 f"Please correct and resubmit in the exact JSON format."
-#             )
-# 
-#             # Trigger second-attempt callback
-#             retry_raw_response = self.vlm_client_fn(re_prompt_query)
-# 
-#             try:
-#                 # Parse retry attempt
-#                 cleaned_text_retry = self._strip_markdown_fences(retry_raw_response)
-#                 parsed_json_retry = json.loads(cleaned_text_retry)
-#                 return VLMCommand.model_validate(parsed_json_retry)
-#             except (json.JSONDecodeError, ValidationError):
-#                 # Hard crash on retry - safely return None to block execution
-#                 return None
-# 
-# 
-# # --- 3. STATEFUL ADVERSARIAL VLM SIMULATOR ---
-# class MockVLMAgent:
-#     def __init__(self, test_id: str):
-#         self.test_id = test_id
-#         self.attempts_made = 0
-# 
-#     def generate_response(self, prompt: str) -> str:
-#         """Simulates VLM behavior for first response vs re-prompt correction query."""
-#         # Detect if this call is an error correction re-prompt
-#         if "Your previous response was invalid" in prompt:
-#             self.attempts_made += 1
-#             # TC-SCH-006 is our hard fault case where the VLM fails to recover even on retry
-#             if self.test_id == "TC-SCH-006":
-#                 return "CRITICAL_ERROR: Connection closed."
-# 
-#             # The remaining 9 cases successfully self-correct on retry
-#             return '{"action": "MOVE", "waypoints": [[0.1, 0.2, 0.3]], "confidence": 0.95}'
-# 
-#         # Initial responses containing specific injected safety faults (TC-SCH-001 to 010)
-#         if self.test_id == "TC-SCH-001":
-#             # Invalid string datatype in coordinates array
-#             return '{"action": "MOVE", "waypoints": [["INVALID", 0.2, 0.3]], "confidence": 0.95}'
-#         elif self.test_id == "TC-SCH-002":
-#             # Missing mandatory waypoints coordinate array parameter
-#             return '{"action": "MOVE", "confidence": 0.95}'
-#         elif self.test_id == "TC-SCH-003":
-#             # Unapproved action keyword "FLY" instead of MOVE
-#             return '{"action": "FLY", "waypoints": [[0.1, 0.2, 0.3]], "confidence": 0.95}'
-#         elif self.test_id == "TC-SCH-004":
-#             # Boolean values injected into confidence score parameter
-#             return '{"action": "MOVE", "waypoints": [[0.1, 0.2, 0.3]], "confidence": true}'
-#         elif self.test_id == "TC-SCH-005":
-#             # Completely blank/empty array passed for waypoints
-#             return '{"action": "MOVE", "waypoints": [], "confidence": 0.95}'
-#         elif self.test_id == "TC-SCH-006":
-#             # Sends a completely empty text payload
-#             return ''
-#         elif self.test_id == "TC-SCH-007":
-#             # Injects a 1D flat array instead of nested 2D array
-#             return '{"action": "MOVE", "waypoints": [0.1, 0.2, 0.3], "confidence": 0.95}'
-#         elif self.test_id == "TC-SCH-008":
-#             # Dimension mismatch: 4 coordinates [X,Y,Z,W] instead of 3 [X,Y,Z]
-#             return '{"action": "MOVE", "waypoints": [[0.1, 0.2, 0.3, 0.4]], "confidence": 0.95}'
-#         elif self.test_id == "TC-SCH-009":
-#             # Injects a massive action directive paragraph
-#             massive_action = "STOP_IMMEDIATELY_NOW_" * 20
-#             return f'{{"action": "{massive_action}", "waypoints": [[0.1, 0.2, 0.3]], "confidence": 0.95}}'
-#         elif self.test_id == "TC-SCH-010":
-#             # Out-of-bounds negative value confidence metric
-#             return '{"action": "MOVE", "waypoints": [[0.1, 0.2, 0.3]], "confidence": -0.5}'
-# 
-#         return '{"action": "MOVE", "waypoints": [[0.1, 0.2, 0.3]], "confidence": 0.95}'
-# 
-# 
-# # --- 4. ADVERSARIAL PYTEST TESTS ---
-# @pytest.mark.parametrize("test_id, recovers_on_retry", [
-#     ("TC-SCH-001", True),  # String coordinate type mismatch
-#     ("TC-SCH-002", True),  # Missing waypoints array field
-#     ("TC-SCH-003", True),  # Unapproved action keyword (FLY)
-#     ("TC-SCH-004", True),  # Boolean injected value in confidence (true)
-#     ("TC-SCH-005", True),  # Empty list of coordinates
-#     ("TC-SCH-006", False), # Sends blank text (Cannot recover -> returns None)
-#     ("TC-SCH-007", True),  # 1D coordinates instead of nested 2D list
-#     ("TC-SCH-008", True),  # Coordinate list dimension mismatch (4 instead of 3)
-#     ("TC-SCH-009", True),  # Massive string in validation variable
-#     ("TC-SCH-010", True),  # Out-of-range negative confidence float
-# ])
-# def test_schema_adversarial_suite(test_id, recovers_on_retry):
-#     # Setup stateful VLM simulator for the test
-#     vlm_agent = MockVLMAgent(test_id)
-# 
-#     # Instantiate the HARM Stage 1 engine connected to our simulator
-#     stage1 = HARMStage1(vlm_client_fn=vlm_agent.generate_response)
-# 
-#     # Start the test process: call initial response
-#     initial_response = vlm_agent.generate_response(prompt="Go to object.")
-# 
-#     # Run through structural schema validator pipeline
-#     validated_command = stage1.validate(initial_response)
-# 
-#     if recovers_on_retry:
-#         # Success check: Ensure self-correction was handled
-#         assert validated_command is not None, f"{test_id} failed to recover on retry"
-#         assert validated_command.action in ["MOVE", "STOP", "HOLD"]
-#         assert len(validated_command.waypoints[0]) == 3
-#         assert 0.0 <= validated_command.confidence <= 1.0
-#     else:
-#         # Hard block checks: Ensure dangerous unrecoverable schemas are completely dropped
-#         assert validated_command is None, f"{test_id} unexpectedly allowed dangerous payload to bypass"
-# 
-# 
-# # --- 5. STANDALONE RUNNER FOR GOOGLE COLAB ---
-# if __name__ == "__main__":
-#     print("🧪 Running Week 8 Stage 2 Adversarial Suite...")
-#     pytest.main(["-v", "test_harm_stage1.py"])
+
+%%writefile test_harm_stage1.py
+import pytest
+import json
+import math
+from typing import List, Optional, Literal
+from pydantic import BaseModel, Field, ValidationError, field_validator
+
+# --- 1. STRICT PYDANTIC SCHEMA DEFINITION ---
+class VLMCommand(BaseModel):
+    action: Literal["MOVE", "STOP", "HOLD"] = Field(..., description="Action directive keyword")
+    waypoints: List[List[float]] = Field(..., description="List of 3D spatial points [X, Y, Z]", min_length=1)
+    confidence: float = Field(..., description="AI confidence score between 0.0 and 1.0", ge=0.0, le=1.0)
+
+    @field_validator("waypoints")
+    @classmethod
+    def validate_waypoint_dimensions(cls, v: List[List[float]]) -> List[List[float]]:
+        """Ensures every single coordinate list element has exactly 3 spatial dimensions."""
+        for wp in v:
+            if len(wp) != 3:
+                raise ValueError("Each waypoint coordinate element must have exactly 3 dimensions [X, Y, Z].")
+        return v
+
+
+# --- 2. HARM STAGE 1 SAFETY VALVE CLASS ---
+
+class HARMStage1:
+    def __init__(self, vlm_client_fn=None):
+        """Initializes the engine with an optional callback function to trigger the mock VLM."""
+        self.vlm_client_fn = vlm_client_fn
+
+    def _strip_markdown_fences(self, text: str) -> str:
+        """Removes markdown code block formatting wrap characters (`json ... `) if present."""
+        text = text.strip()
+        if text.startswith("```"):
+            lines = text.splitlines()
+            if len(lines) >= 2 and lines[0].startswith("```"):
+                lines = lines[1:]
+            if lines and lines[-1].strip() == "```":
+                lines = lines[:-1]
+            text = "\n".join(lines).strip()
+        return text
+
+    def validate(self, raw_response: str) -> Optional[VLMCommand]:
+        """Runs the clean-to-parse loop. Triggers a one-time re-prompt retry on fail."""
+        try:
+            # First clean attempt
+            cleaned_text = self._strip_markdown_fences(raw_response)
+            parsed_json = json.loads(cleaned_text)
+            return VLMCommand.model_validate(parsed_json)
+        except (json.JSONDecodeError, ValidationError) as error:
+            error_msg = str(error).replace("\n", " ")
+
+# If no VLM simulation client callback function exists, block immediately
+            if not self.vlm_client_fn:
+                return None
+
+# Construct standard, descriptive error prompt
+            re_prompt_query = (
+                f"Your previous response was invalid because: {error_msg}. "
+                f"Please correct and resubmit in the exact JSON format."
+            )
+
+# Trigger second-attempt callback
+            retry_raw_response = self.vlm_client_fn(re_prompt_query)
+
+            try:
+                # Parse retry attempt
+                cleaned_text_retry = self._strip_markdown_fences(retry_raw_response)
+                parsed_json_retry = json.loads(cleaned_text_retry)
+                return VLMCommand.model_validate(parsed_json_retry)
+            except (json.JSONDecodeError, ValidationError):
+                # Hard crash on retry - safely return None to block execution
+                return None
+
+
+# --- 3. STATEFUL ADVERSARIAL VLM SIMULATOR ---
+class MockVLMAgent:
+    def __init__(self, test_id: str):
+        self.test_id = test_id
+        self.attempts_made = 0
+
+    def generate_response(self, prompt: str) -> str:
+        """Simulates VLM behavior for first response vs re-prompt correction query."""
+# Detect if this call is an error correction re-prompt
+        if "Your previous response was invalid" in prompt:
+            self.attempts_made += 1
+
+# TC-SCH-006 is our hard fault case where the VLM fails to recover even on retry
+            if self.test_id == "TC-SCH-006":
+                return "CRITICAL_ERROR: Connection closed."
+
+            # The remaining 9 cases successfully self-correct on retry
+            return '{"action": "MOVE", "waypoints": [[0.1, 0.2, 0.3]], "confidence": 0.95}'
+
+        # Initial responses containing specific injected safety faults (TC-SCH-001 to 010)
+        if self.test_id == "TC-SCH-001":
+            # Invalid string datatype in coordinates array
+            return '{"action": "MOVE", "waypoints": [["INVALID", 0.2, 0.3]], "confidence": 0.95}'
+        elif self.test_id == "TC-SCH-002":
+            # Missing mandatory waypoints coordinate array parameter
+            return '{"action": "MOVE", "confidence": 0.95}'
+        elif self.test_id == "TC-SCH-003":
+            # Unapproved action keyword "FLY" instead of MOVE
+            return '{"action": "FLY", "waypoints": [[0.1, 0.2, 0.3]], "confidence": 0.95}'
+        elif self.test_id == "TC-SCH-004":
+            # Boolean values injected into confidence score parameter
+            return '{"action": "MOVE", "waypoints": [[0.1, 0.2, 0.3]], "confidence": true}'
+        elif self.test_id == "TC-SCH-005":
+            # Completely blank/empty array passed for waypoints
+            return '{"action": "MOVE", "waypoints": [], "confidence": 0.95}'
+        elif self.test_id == "TC-SCH-006":
+            # Sends a completely empty text payload
+            return ''
+        elif self.test_id == "TC-SCH-007":
+            # Injects a 1D flat array instead of nested 2D array
+            return '{"action": "MOVE", "waypoints": [0.1, 0.2, 0.3], "confidence": 0.95}'
+        elif self.test_id == "TC-SCH-008":
+            # Dimension mismatch: 4 coordinates [X,Y,Z,W] instead of 3 [X,Y,Z]
+            return '{"action": "MOVE", "waypoints": [[0.1, 0.2, 0.3, 0.4]], "confidence": 0.95}'
+        elif self.test_id == "TC-SCH-009":
+            # Injects a massive action directive paragraph
+            massive_action = "STOP_IMMEDIATELY_NOW_" * 20
+            return f'{{"action": "{massive_action}", "waypoints": [[0.1, 0.2, 0.3]], "confidence": 0.95}}'
+        elif self.test_id == "TC-SCH-010":
+            # Out-of-bounds negative value confidence metric
+            return '{"action": "MOVE", "waypoints": [[0.1, 0.2, 0.3]], "confidence": -0.5}'
+
+        return '{"action": "MOVE", "waypoints": [[0.1, 0.2, 0.3]], "confidence": 0.95}'
+
+
+# --- 4. ADVERSARIAL PYTEST TESTS ---
+@pytest.mark.parametrize("test_id, recovers_on_retry", [
+    ("TC-SCH-001", True),  # String coordinate type mismatch
+    ("TC-SCH-002", True),  # Missing waypoints array field
+    ("TC-SCH-003", True),  # Unapproved action keyword (FLY)
+    ("TC-SCH-004", True),  # Boolean injected value in confidence (true)
+    ("TC-SCH-005", True),  # Empty list of coordinates
+    ("TC-SCH-006", False), # Sends blank text (Cannot recover -> returns None)
+    ("TC-SCH-007", True),  # 1D coordinates instead of nested 2D list
+    ("TC-SCH-008", True),  # Coordinate list dimension mismatch (4 instead of 3)
+    ("TC-SCH-009", True),  # Massive string in validation variable
+    ("TC-SCH-010", True),  # Out-of-range negative confidence float
+])
+
+def test_schema_adversarial_suite(test_id, recovers_on_retry):
+    # Setup stateful VLM simulator for the test
+    vlm_agent = MockVLMAgent(test_id)
+ 
+    # Instantiate the HARM Stage 1 engine connected to our simulator
+    stage1 = HARMStage1(vlm_client_fn=vlm_agent.generate_response)
+
+    # Start the test process: call initial response
+     initial_response = vlm_agent.generate_response(prompt="Go to object.")
+
+    # Run through structural schema validator pipeline
+    validated_command = stage1.validate(initial_response)
+
+    if recovers_on_retry:
+        # Success check: Ensure self-correction was handled
+        assert validated_command is not None, f"{test_id} failed to recover on retry"
+        assert validated_command.action in ["MOVE", "STOP", "HOLD"]
+        assert len(validated_command.waypoints[0]) == 3
+        assert 0.0 <= validated_command.confidence <= 1.0
+    else:
+        # Hard block checks: Ensure dangerous unrecoverable schemas are completely dropped
+        assert validated_command is None, f"{test_id} unexpectedly allowed dangerous payload to bypass"
+
+
+# --- 5. STANDALONE RUNNER FOR GOOGLE COLAB ---
+if __name__ == "__main__":
+    print("🧪 Running Week 8 Stage 2 Adversarial Suite...")
+    pytest.main(["-v", "test_harm_stage1.py"])
 
 !pytest test_harm_stage1.py -v
 
@@ -401,114 +404,115 @@ if __name__ == "__main__":
     print(f"🎁 Output Cleared Path Waypoints:\n{safe_command.waypoints}")
     print("="*65)
 
-# Commented out IPython magic to ensure Python compatibility.
-# %%writefile test_harm_stage2.py
-# import pytest
-# import math
-# from typing import List, Tuple
-# from pydantic import BaseModel, Field
-# 
-# # --- 1. SCHEMAS AND ENGINES DUPLICATED FOR SELF-CONTAINED UNIT TESTING ---
-# class VLMCommand(BaseModel):
-#     action: str = Field(..., description="Action directive")
-#     waypoints: List[List[float]] = Field(..., description="List of [X, Y, Z] points")
-#     confidence: float = Field(..., description="Confidence value")
-# 
-# class WorkspaceChecker:
-#     def __init__(self, r_min: float = 0.2, r_max: float = 1.0):
-#         self.r_min = r_min
-#         self.r_max = r_max
-# 
-#     def is_reachable(self, point: List[float]) -> bool:
-#         x, y, z = point
-#         distance = math.sqrt(x**2 + y**2 + z**2)
-#         return self.r_min <= distance <= self.r_max
-# 
-#     def clip_to_boundary(self, point: List[float]) -> Tuple[List[float], float]:
-#         x, y, z = point
-#         original_distance = math.sqrt(x**2 + y**2 + z**2)
-#         if original_distance == 0:
-#             return [0.0, 0.0, self.r_min], self.r_min
-# 
-#         if original_distance < self.r_min:
-#             target_radius = self.r_min
-#         else:
-#             target_radius = self.r_max
-# 
-#         scale = target_radius / original_distance
-#         clipped_point = [x * scale, y * scale, z * scale]
-# 
-#         correction_distance = math.sqrt(
-#             (point[0] - clipped_point[0])**2 +
-#             (point[1] - clipped_point[1])**2 +
-#             (point[2] - clipped_point[2])**2
-#         )
-#         return clipped_point, correction_distance
-# 
-# class HARMStage2:
-#     def __init__(self, checker: WorkspaceChecker):
-#         self.checker = checker
-# 
-#     def validate(self, command: VLMCommand) -> Tuple[VLMCommand, List[str], List[float]]:
-#         corrected_waypoints = []
-#         severities = []
-#         distances = []
-# 
-#         for wp in command.waypoints:
-#             if self.checker.is_reachable(wp):
-#                 corrected_waypoints.append(wp)
-#                 severities.append("SAFE")
-#                 distances.append(0.0)
-#             else:
-#                 clipped_wp, corr_dist = self.checker.clip_to_boundary(wp)
-#                 corrected_waypoints.append(clipped_wp)
-#                 distances.append(corr_dist)
-#                 if corr_dist > 0.5:
-#                     severities.append("HIGH_SEVERITY")
-#                 else:
-#                     severities.append("LOW_SEVERITY")
-# 
-#         return VLMCommand(action=command.action, waypoints=corrected_waypoints, confidence=command.confidence), severities, distances
-# 
-# 
-# # --- 2. THE 10 ADVERSARIAL WORKSPACE MATRIX TEST CASES ---
-# @pytest.mark.parametrize("test_id, raw_waypoints, expected_severity, check_type", [
-#     ("TC-WKP-011", [[1.02, 0.0, 0.0]], "LOW_SEVERITY", "minor_overextension"),
-#     ("TC-WKP-012", [[2.5, 0.0, 0.0]], "HIGH_SEVERITY", "massive_hallucination"),
-#     ("TC-WKP-013", [[0.1, 0.0, 0.0]], "LOW_SEVERITY", "minor_self_collision"),
-#     ("TC-WKP-014", [[0.0, 0.0, 0.0]], "LOW_SEVERITY", "absolute_center_singularity"),
-#     ("TC-WKP-015", [[-1.05, 0.0, 0.0]], "LOW_SEVERITY", "negative_x_minor_bound"),
-#     ("TC-WKP-016", [[-3.0, 0.0, 0.0]], "HIGH_SEVERITY", "negative_x_massive_hallucination"),
-#     ("TC-WKP-017", [[0.0, 0.0, 3.0]], "HIGH_SEVERITY", "extreme_vertical_height_leak"),
-#     ("TC-WKP-018", [[0.5, 0.5, 0.5]], "SAFE", "fully_valid_trajectory_point"),
-#     ("TC-WKP-019", [[0.5, 0.5, 0.5], [2.0, 2.0, 2.0]], "HIGH_SEVERITY", "mixed_safe_and_corrupted_path"),
-#     ("TC-WKP-020", [[0.01, 0.01, 0.01]], "LOW_SEVERITY", "deep_inner_collision_breach"),
-# ])
-# def test_workspace_adversarial_suite(test_id, raw_waypoints, expected_severity, check_type):
-#     # Initialize components
-#     checker = WorkspaceChecker()
-#     stage2 = HARMStage2(checker)
-# 
-#     # Pack raw coordinate input into VLM structure
-#     input_command = VLMCommand(action="MOVE", waypoints=raw_waypoints, confidence=0.95)
-# 
-#     # Process through safety valve
-#     output_command, severities, distances = stage2.validate(input_command)
-# 
-#     # --- ASSERTION VALIDATION MATRIX ---
-#     # 1. Check if high-severity alerts match correctly when thresholds are breached
-#     if expected_severity == "HIGH_SEVERITY":
-#         assert "HIGH_SEVERITY" in severities, f"{test_id} failed to trigger HIGH_SEVERITY alert flag."
-#     elif expected_severity == "LOW_SEVERITY":
-#         assert "LOW_SEVERITY" in severities, f"{test_id} failed to flag LOW_SEVERITY correction."
-#         assert "HIGH_SEVERITY" not in severities
-#     else:
-#         for sev in severities:
-#             assert sev == "SAFE"
-# 
-#     # 2. Safety Invariant Check: Verify that all final coordinates are strictly within boundaries
-#     for wp in output_command.waypoints:
-#         assert checker.is_reachable(wp) is True, f"{test_id} output a waypoint that remains out of bounds!"
+%%writefile test_harm_stage2.py
+import pytest
+import math
+from typing import List, Tuple
+from pydantic import BaseModel, Field
+
+# --- 1. SCHEMAS AND ENGINES DUPLICATED FOR SELF-CONTAINED UNIT TESTING ---
+
+class VLMCommand(BaseModel):
+    action: str = Field(..., description="Action directive")
+    waypoints: List[List[float]] = Field(..., description="List of [X, Y, Z] points")
+    confidence: float = Field(..., description="Confidence value")
+
+class WorkspaceChecker:
+    def __init__(self, r_min: float = 0.2, r_max: float = 1.0):
+        self.r_min = r_min
+        self.r_max = r_max
+
+    def is_reachable(self, point: List[float]) -> bool:
+        x, y, z = point
+        distance = math.sqrt(x**2 + y**2 + z**2)
+        return self.r_min <= distance <= self.r_max
+
+    def clip_to_boundary(self, point: List[float]) -> Tuple[List[float], float]:
+        x, y, z = point
+        original_distance = math.sqrt(x**2 + y**2 + z**2)
+        if original_distance == 0:
+            return [0.0, 0.0, self.r_min], self.r_min
+
+        if original_distance < self.r_min:
+            target_radius = self.r_min
+        else:
+            target_radius = self.r_max
+
+        scale = target_radius / original_distance
+        clipped_point = [x * scale, y * scale, z * scale]
+
+        correction_distance = math.sqrt(
+            (point[0] - clipped_point[0])**2 +
+            (point[1] - clipped_point[1])**2 +
+            (point[2] - clipped_point[2])**2
+        )
+        return clipped_point, correction_distance
+
+class HARMStage2:
+    def __init__(self, checker: WorkspaceChecker):
+        self.checker = checker
+
+    def validate(self, command: VLMCommand) -> Tuple[VLMCommand, List[str], List[float]]:
+        corrected_waypoints = []
+        severities = []
+        distances = []
+
+        for wp in command.waypoints:
+            if self.checker.is_reachable(wp):
+                corrected_waypoints.append(wp)
+                severities.append("SAFE")
+                distances.append(0.0)
+            else:
+                clipped_wp, corr_dist = self.checker.clip_to_boundary(wp)
+                corrected_waypoints.append(clipped_wp)
+                distances.append(corr_dist)
+                if corr_dist > 0.5:
+                    severities.append("HIGH_SEVERITY")
+                else:
+                    severities.append("LOW_SEVERITY")
+
+        return VLMCommand(action=command.action, waypoints=corrected_waypoints, confidence=command.confidence), severities, distances
+
+
+# --- 2. THE 10 ADVERSARIAL WORKSPACE MATRIX TEST CASES ---
+        
+@pytest.mark.parametrize("test_id, raw_waypoints, expected_severity, check_type", [
+    ("TC-WKP-011", [[1.02, 0.0, 0.0]], "LOW_SEVERITY", "minor_overextension"),
+    ("TC-WKP-012", [[2.5, 0.0, 0.0]], "HIGH_SEVERITY", "massive_hallucination"),
+    ("TC-WKP-013", [[0.1, 0.0, 0.0]], "LOW_SEVERITY", "minor_self_collision"),
+    ("TC-WKP-014", [[0.0, 0.0, 0.0]], "LOW_SEVERITY", "absolute_center_singularity"),
+    ("TC-WKP-015", [[-1.05, 0.0, 0.0]], "LOW_SEVERITY", "negative_x_minor_bound"),
+    ("TC-WKP-016", [[-3.0, 0.0, 0.0]], "HIGH_SEVERITY", "negative_x_massive_hallucination"),
+    ("TC-WKP-017", [[0.0, 0.0, 3.0]], "HIGH_SEVERITY", "extreme_vertical_height_leak"),
+    ("TC-WKP-018", [[0.5, 0.5, 0.5]], "SAFE", "fully_valid_trajectory_point"),
+    ("TC-WKP-019", [[0.5, 0.5, 0.5], [2.0, 2.0, 2.0]], "HIGH_SEVERITY", "mixed_safe_and_corrupted_path"),
+    ("TC-WKP-020", [[0.01, 0.01, 0.01]], "LOW_SEVERITY", "deep_inner_collision_breach"),
+])
+def test_workspace_adversarial_suite(test_id, raw_waypoints, expected_severity, check_type):
+    # Initialize components
+    checker = WorkspaceChecker()
+    stage2 = HARMStage2(checker)
+
+    # Pack raw coordinate input into VLM structure
+    input_command = VLMCommand(action="MOVE", waypoints=raw_waypoints, confidence=0.95)
+
+    # Process through safety valve
+    output_command, severities, distances = stage2.validate(input_command)
+
+    # --- ASSERTION VALIDATION MATRIX ---
+    # 1. Check if high-severity alerts match correctly when thresholds are breached
+    if expected_severity == "HIGH_SEVERITY":
+        assert "HIGH_SEVERITY" in severities, f"{test_id} failed to trigger HIGH_SEVERITY alert flag."
+    elif expected_severity == "LOW_SEVERITY":
+        assert "LOW_SEVERITY" in severities, f"{test_id} failed to flag LOW_SEVERITY correction."
+        assert "HIGH_SEVERITY" not in severities
+    else:
+        for sev in severities:
+            assert sev == "SAFE"
+
+    # 2. Safety Invariant Check: Verify that all final coordinates are strictly within boundaries
+    for wp in output_command.waypoints:
+        assert checker.is_reachable(wp) is True, f"{test_id} output a waypoint that remains out of bounds!"
 
 !pytest test_harm_stage2.py -v
 
@@ -618,82 +622,82 @@ if __name__ == "__main__":
     res_b = gate.check(extreme_trajectory)
     print(f"Execution Result Status: {res_b.status} | Note: {res_b.note}")
 
-# Commented out IPython magic to ensure Python compatibility.
-# %%writefile test_harm_stage3.py
-# import pytest
-# from typing import List, Literal
-# 
-# # --- 1. SCHEMAS AND ENGINES DUPLICATED FOR SELF-CONTAINED UNIT TESTING ---
-# class JointState:
-#     def __init__(self, positions: List[float], timestamp: float):
-#         self.positions = positions
-#         self.timestamp = timestamp
-# 
-# class TrajectoryResult:
-#     def __init__(self, status: Literal["FEASIBLE", "INFEASIBLE"], trajectory: List[JointState], note: str):
-#         self.status = status
-#         self.trajectory = trajectory
-#         self.note = note
-# 
-# class JointLimitGate:
-#     URDF_MAX_VELOCITY = 1.0
-# 
-#     def __init__(self, num_joints: int = 2):
-#         self.num_joints = num_joints
-#         self.velocity_ceiling = self.URDF_MAX_VELOCITY * 0.8
-# 
-#     def _check_velocities_pass(self, trajectory: List[JointState]) -> bool:
-#         for i in range(len(trajectory) - 1):
-#             state_curr = trajectory[i]
-#             state_next = trajectory[i + 1]
-#             dt = state_next.timestamp - state_curr.timestamp
-#             if dt <= 0:
-#                 return False
-#             for joint_idx in range(self.num_joints):
-#                 d_theta = abs(state_next.positions[joint_idx] - state_curr.positions[joint_idx])
-#                 velocity = d_theta / dt
-#                 if velocity > self.velocity_ceiling:
-#                     return False
-#         return True
-# 
-#     def check(self, trajectory: List[JointState]) -> TrajectoryResult:
-#         if self._check_velocities_pass(trajectory):
-#             return TrajectoryResult("FEASIBLE", trajectory, "Pass 1 Verification Successful.")
-# 
-#         mitigated_trajectory = []
-#         accumulated_time = 0.0
-#         mitigated_trajectory.append(JointState(trajectory[0].positions, 0.0))
-# 
-#         for i in range(len(trajectory) - 1):
-#             original_dt = trajectory[i + 1].timestamp - trajectory[i].timestamp
-#             mitigated_dt = original_dt * 2.0
-#             accumulated_time += mitigated_dt
-#             mitigated_trajectory.append(JointState(trajectory[i + 1].positions, accumulated_time))
-# 
-#         if self._check_velocities_pass(mitigated_trajectory):
-#             return TrajectoryResult("FEASIBLE", mitigated_trajectory, "Pass 2 Mitigated Successfully.")
-# 
-#         return TrajectoryResult("INFEASIBLE", trajectory, "Kinematic Limit Breach.")
-# 
-# 
-# # --- 2. THE 10 ADVERSARIAL KINEMATIC TEST CASES (UPDATED FOR 2-DOF RR_ARM) ---
-# @pytest.mark.parametrize("test_id, trajectory_data, expected_status", [
-#     ("TC-KIN-021", [([0.0, 0.0], 0.0), ([0.5, 0.2], 1.0)], "FEASIBLE"),   # Safe path
-#     ("TC-KIN-022", [([0.0, 0.0], 0.0), ([1.2, 0.0], 1.0)], "FEASIBLE"),   # Over-speed (1.2 rad/s -> fixed to 0.6)
-#     ("TC-KIN-023", [([0.0, 0.0], 0.0), ([5.0, 0.0], 1.0)], "INFEASIBLE"), # Extreme speed
-#     ("TC-KIN-024", [([0.0, 0.0], 0.0), ([0.1, 0.1], 0.0)], "INFEASIBLE"), # Zero delta-time glitch
-#     ("TC-KIN-025", [([0.0, 0.0], 0.0), ([0.0, 1.4], 1.0)], "FEASIBLE"),   # Joint 2 over-speed mitigation success
-#     ("TC-KIN-026", [([0.0, 0.0], 0.0), ([0.0, 8.0], 1.0)], "INFEASIBLE"), # Joint 2 uncorrectable speed
-#     ("TC-KIN-027", [([0.0, 0.0], 0.0), ([-1.0, 0.0], 1.0)], "FEASIBLE"),  # Negative rotation breach -> fixed to 0.5
-#     ("TC-KIN-028", [([0.0, 0.0], 0.0), ([-4.0, 0.0], 1.0)], "INFEASIBLE"),# Massive negative velocity failure
-#     ("TC-KIN-029", [([0.0, 0.0], 0.0), ([0.2, 0.2], 1.0), ([1.7, 0.5], 2.0)], "FEASIBLE"), # Multi-step fix
-#     ("TC-KIN-030", [([0.0, 0.0], 0.0), ([0.1, 0.1], 1.0), ([10.0, 0.0], 2.0)], "INFEASIBLE") # Mixed hard fail
-# ])
-# def test_kinematic_adversarial_suite(test_id, trajectory_data, expected_status):
-#     gate = JointLimitGate(num_joints=2)
-#     trajectory = [JointState(pos, ts) for pos, ts in trajectory_data]
-#     result = gate.check(trajectory)
-#     assert result.status == expected_status, f"{test_id} failed. Expected {expected_status}, got {result.status}."
+%%writefile test_harm_stage3.py
+import pytest
+from typing import List, Literal
+
+# --- 1. SCHEMAS AND ENGINES DUPLICATED FOR SELF-CONTAINED UNIT TESTING ---
+class JointState:
+    def __init__(self, positions: List[float], timestamp: float):
+        self.positions = positions
+        self.timestamp = timestamp
+
+class TrajectoryResult:
+    def __init__(self, status: Literal["FEASIBLE", "INFEASIBLE"], trajectory: List[JointState], note: str):
+        self.status = status
+        self.trajectory = trajectory
+        self.note = note
+
+class JointLimitGate:
+    URDF_MAX_VELOCITY = 1.0
+
+    def __init__(self, num_joints: int = 2):
+        self.num_joints = num_joints
+        self.velocity_ceiling = self.URDF_MAX_VELOCITY * 0.8
+
+    def _check_velocities_pass(self, trajectory: List[JointState]) -> bool:
+        for i in range(len(trajectory) - 1):
+            state_curr = trajectory[i]
+            state_next = trajectory[i + 1]
+            dt = state_next.timestamp - state_curr.timestamp
+            if dt <= 0:
+                return False
+            for joint_idx in range(self.num_joints):
+                d_theta = abs(state_next.positions[joint_idx] - state_curr.positions[joint_idx])
+                velocity = d_theta / dt
+                if velocity > self.velocity_ceiling:
+                    return False
+        return True
+
+    def check(self, trajectory: List[JointState]) -> TrajectoryResult:
+        if self._check_velocities_pass(trajectory):
+            return TrajectoryResult("FEASIBLE", trajectory, "Pass 1 Verification Successful.")
+
+        mitigated_trajectory = []
+        accumulated_time = 0.0
+        mitigated_trajectory.append(JointState(trajectory[0].positions, 0.0))
+
+        for i in range(len(trajectory) - 1):
+            original_dt = trajectory[i + 1].timestamp - trajectory[i].timestamp
+            mitigated_dt = original_dt * 2.0
+            accumulated_time += mitigated_dt
+            mitigated_trajectory.append(JointState(trajectory[i + 1].positions, accumulated_time))
+
+        if self._check_velocities_pass(mitigated_trajectory):
+           return TrajectoryResult("FEASIBLE", mitigated_trajectory, "Pass 2 Mitigated Successfully.")
+
+        return TrajectoryResult("INFEASIBLE", trajectory, "Kinematic Limit Breach.")
+
+
+# --- 2. THE 10 ADVERSARIAL KINEMATIC TEST CASES (UPDATED FOR 2-DOF RR_ARM) ---
+
+@pytest.mark.parametrize("test_id, trajectory_data, expected_status", [
+    ("TC-KIN-021", [([0.0, 0.0], 0.0), ([0.5, 0.2], 1.0)], "FEASIBLE"),   # Safe path
+    ("TC-KIN-022", [([0.0, 0.0], 0.0), ([1.2, 0.0], 1.0)], "FEASIBLE"),   # Over-speed (1.2 rad/s -> fixed to 0.6)
+    ("TC-KIN-023", [([0.0, 0.0], 0.0), ([5.0, 0.0], 1.0)], "INFEASIBLE"), # Extreme speed
+    ("TC-KIN-024", [([0.0, 0.0], 0.0), ([0.1, 0.1], 0.0)], "INFEASIBLE"), # Zero delta-time glitch
+    ("TC-KIN-025", [([0.0, 0.0], 0.0), ([0.0, 1.4], 1.0)], "FEASIBLE"),   # Joint 2 over-speed mitigation success
+    ("TC-KIN-026", [([0.0, 0.0], 0.0), ([0.0, 8.0], 1.0)], "INFEASIBLE"), # Joint 2 uncorrectable speed
+    ("TC-KIN-027", [([0.0, 0.0], 0.0), ([-1.0, 0.0], 1.0)], "FEASIBLE"),  # Negative rotation breach -> fixed to 0.5
+    ("TC-KIN-028", [([0.0, 0.0], 0.0), ([-4.0, 0.0], 1.0)], "INFEASIBLE"),# Massive negative velocity failure
+    ("TC-KIN-029", [([0.0, 0.0], 0.0), ([0.2, 0.2], 1.0), ([1.7, 0.5], 2.0)], "FEASIBLE"), # Multi-step fix
+    ("TC-KIN-030", [([0.0, 0.0], 0.0), ([0.1, 0.1], 1.0), ([10.0, 0.0], 2.0)], "INFEASIBLE") # Mixed hard fail
+])
+def test_kinematic_adversarial_suite(test_id, trajectory_data, expected_status):
+    gate = JointLimitGate(num_joints=2)
+    trajectory = [JointState(pos, ts) for pos, ts in trajectory_data]
+    result = gate.check(trajectory)
+    assert result.status == expected_status, f"{test_id} failed. Expected {expected_status}, got {result.status}."
 
 !pytest test_harm_stage3.py -v
 
@@ -969,245 +973,244 @@ if __name__ == "__main__":
 
 """##**Full Adversarial Test Suite Run**"""
 
-# Commented out IPython magic to ensure Python compatibility.
-# %%writefile test_harm_master_suite.py
-# import pytest
-# import json
-# import math
-# from typing import List, Tuple, Literal, Optional
-# from pydantic import BaseModel, Field, ValidationError
-# 
-# # =====================================================================
-# # 1. HARM SYSTEM ARCHITECTURE IMPLEMENTATION
-# # =====================================================================
-# 
-# class RobotState:
-#     def __init__(self, positions: List[float], timestamp: float):
-#         self.positions = positions
-#         self.timestamp = timestamp
-# 
-# class VLMCommand(BaseModel):
-#     action: str = Field(..., description="Action directive keyword (e.g., MOVE, HOLD)")
-#     waypoints: List[List[float]] = Field(..., description="List of 3D spatial points [X, Y, Z]")
-#     confidence: float = Field(..., description="Model certainty metric between 0.0 and 1.0")
-# 
-# class HARMResult(BaseModel):
-#     stage_failed: str = Field(default="NONE")
-#     error_type: str = Field(default="NONE")
-#     correction_applied: float = Field(default=0.0)
-#     catch_type: Literal["none", "intercepted", "recovered", "fallback"] = Field(...)
-# 
-# class Stage1Schema:
-#     def __init__(self, mock_vlm_reprompt_fn=None):
-#         self.mock_vlm_reprompt_fn = mock_vlm_reprompt_fn
-# 
-#     def clean_and_validate(self, raw_response: str) -> Tuple[Optional[VLMCommand], bool, str]:
-#         cleaned = raw_response.strip()
-#         if cleaned.startswith("```"):
-#             cleaned = cleaned.split("\n", 1)[-1]
-#         if cleaned.endswith("```"):
-#             cleaned = cleaned.rsplit("\n", 1)[0]
-#         cleaned = cleaned.strip("`").strip()
-# 
-#         try:
-#             data = json.loads(cleaned)
-#             cmd = VLMCommand.model_validate(data)
-#             return cmd, False, "Success"
-#         except (json.JSONDecodeError, ValidationError) as e:
-#             return None, True, str(e)
-# 
-#     def validate(self, raw_response: str) -> Tuple[Optional[VLMCommand], Literal["none", "intercepted", "fallback"], str]:
-#         cmd, failed, err_details = self.clean_and_validate(raw_response)
-#         if not failed:
-#             return cmd, "none", "NONE"
-# 
-#         if self.mock_vlm_reprompt_fn:
-#             recovered_raw = self.mock_vlm_reprompt_fn(raw_response, err_details)
-#             if not recovered_raw:
-#                 return None, "fallback", "STAGE_1_HARD_CRASH"
-# 
-#             recovered_cmd, rec_failed, rec_err = self.clean_and_validate(recovered_raw)
-#             if not rec_failed:
-#                 return recovered_cmd, "intercepted", "NONE"
-# 
-#         return None, "fallback", "STAGE_1_FAILED"
-# 
-# class Stage2Workspace:
-#     def __init__(self, r_min: float = 0.2, r_max: float = 1.0):
-#         self.r_min = r_min
-#         self.r_max = r_max
-# 
-#     def is_reachable(self, point: List[float]) -> bool:
-#         if len(point) != 3:
-#             return False
-#         x, y, z = point
-#         dist = math.sqrt(x**2 + y**2 + z**2)
-#         return self.r_min <= dist <= self.r_max
-# 
-#     def clip_to_boundary(self, point: List[float]) -> Tuple[List[float], float]:
-#         x, y, z = point if len(point) == 3 else (point[0], point[1], 0.0)
-#         dist = math.sqrt(x**2 + y**2 + z**2)
-#         if dist == 0:
-#             return [0.0, 0.0, self.r_min], self.r_min
-# 
-#         target_r = self.r_min if dist < self.r_min else self.r_max
-#         scale = target_r / dist
-#         clipped = [x * scale, y * scale, z * scale]
-#         corr_dist = math.sqrt(sum((o - c)**2 for o, c in zip([x,y,z], clipped)))
-#         return clipped, corr_dist
-# 
-#     def validate(self, command: VLMCommand) -> Tuple[VLMCommand, float, bool]:
-#         max_correction = 0.0
-#         corrected_waypoints = []
-#         high_severity_triggered = False
-# 
-#         for wp in command.waypoints:
-#             if self.is_reachable(wp):
-#                 corrected_waypoints.append(wp)
-#             else:
-#                 clipped_wp, corr_dist = self.clip_to_boundary(wp)
-#                 corrected_waypoints.append(clipped_wp)
-#                 max_correction = max(max_correction, corr_dist)
-#                 if corr_dist > 0.5:
-#                     high_severity_triggered = True
-# 
-#         new_command = VLMCommand(
-#             action=command.action,
-#             waypoints=corrected_waypoints,
-#             confidence=command.confidence
-#         )
-#         return new_command, max_correction, high_severity_triggered
-# 
-# class Stage3Kinematics:
-#     URDF_MAX_VELOCITY = 1.0
-# 
-#     def __init__(self, num_joints: int = 2):
-#         self.num_joints = num_joints
-#         self.velocity_ceiling = self.URDF_MAX_VELOCITY * 0.8  # 0.8 rad/s
-# 
-#     def _calculate_max_velocity(self, trajectory: List[List[float]], dt: float) -> float:
-#         max_vel = 0.0
-#         for i in range(len(trajectory) - 1):
-#             curr_pos = trajectory[i]
-#             next_pos = trajectory[i + 1]
-#             for j in range(min(self.num_joints, len(curr_pos), len(next_pos))):
-#                 vel = abs(next_pos[j] - curr_pos[j]) / dt
-#                 max_vel = max(max_vel, vel)
-#         return max_vel
-# 
-#     def check_and_scale(self, command: VLMCommand, last_state: RobotState) -> Tuple[Optional[List[List[float]]], float, bool]:
-#         trajectory = [last_state.positions] + command.waypoints
-#         segment_dt = 1.0
-# 
-#         max_v = self._calculate_max_velocity(trajectory, segment_dt)
-#         if max_v <= self.velocity_ceiling:
-#             return command.waypoints, max_v, False
-# 
-#         print(f"⚠️ Kinematic breach detected: {max_v:.3f} rad/s. Scaling time execution...")
-#         mitigated_dt = segment_dt * 2.0
-#         scaled_max_v = self._calculate_max_velocity(trajectory, mitigated_dt)
-# 
-#         if scaled_max_v <= self.velocity_ceiling:
-#             return command.waypoints, scaled_max_v, True
-# 
-#         return None, scaled_max_v, True
-# 
-# class HARM:
-#     def __init__(self, mock_vlm_reprompt_fn=None):
-#         self.stage1 = Stage1Schema(mock_vlm_reprompt_fn)
-#         self.stage2 = Stage2Workspace()
-#         self.stage3 = Stage3Kinematics()
-# 
-#     def validate(self, raw_response: str, last_state: RobotState) -> Tuple[VLMCommand, HARMResult]:
-#         cmd, s1_catch, s1_err = self.stage1.validate(raw_response)
-# 
-#         if s1_catch == "fallback":
-#             return VLMCommand(action="hold", waypoints=[last_state.positions], confidence=0.0), HARMResult(
-#                 stage_failed="STAGE_1", error_type="JSON_OR_VALIDATION_ERROR", catch_type="fallback"
-#             )
-# 
-#         cmd, s2_correction, s2_high_severity = self.stage2.validate(cmd)
-#         final_waypoints, s3_vel, s3_scaled = self.stage3.check_and_scale(cmd, last_state)
-# 
-#         if final_waypoints is None:
-#             return VLMCommand(action="hold", waypoints=[last_state.positions], confidence=0.0), HARMResult(
-#                 stage_failed="STAGE_3", error_type="VELOCITY_LIMIT_BREACH", correction_applied=s3_vel, catch_type="fallback"
-#             )
-# 
-#         if s1_catch == "intercepted":
-#             catch_type = "intercepted"
-#         elif s2_correction > 0.0 or s3_scaled:
-#             catch_type = "recovered"
-#         else:
-#             catch_type = "none"
-# 
-#         result = HARMResult(
-#             stage_failed="NONE",
-#             error_type="NONE",
-#             correction_applied=max(s2_correction, s3_vel if s3_scaled else 0.0),
-#             catch_type=catch_type
-#         )
-#         return cmd, result
-# 
-# # =====================================================================
-# # 2. GENERATION OF THE 50 COMBINATORIAL ADVERSARIAL CASES
-# # =====================================================================
-# 
-# def generate_50_test_cases() -> List[Tuple[str, str, str]]:
-#     """Generates 50 strict adversarial strings mapped to target catch types."""
-#     cases = []
-# 
-#     # --- Group 1: 15 Schema Level Anomalies ---
-#     for i in range(1, 16):
-#         tc_id = f"TC-ALL-{str(i).zfill(3)}"
-#         if i <= 12:
-#             if i % 2 == 0:
-#                 payload = f'{{"action": "MOVE", "waypoints": [[0.4, 0.0]], "confidence": "HIGH_CORRUPTED_STRING"}}'
-#             else:
-#                 payload = f'{{"action": "MOVE", "waypoints": [[0.4, 0.0, 0.4]] "confidence": 0.95}}'
-#             cases.append((tc_id, payload, "intercepted"))
-#         else:
-#             cases.append((tc_id, "CRITICAL_SYSTEM_MALFUNCTION_EMPTY_STRING", "fallback"))
-# 
-#     # --- Group 2: 20 Spatial Workspace Breach Anomalies ---
-#     for i in range(16, 36):
-#         tc_id = f"TC-ALL-{str(i).zfill(3)}"
-#         if i % 2 == 0:
-#             payload = f'{{"action": "MOVE", "waypoints": [[1.05, 0.0, 0.0]], "confidence": 0.9}}'
-#         else:
-#             payload = f'{{"action": "MOVE", "waypoints": [[2.5, 0.0, 0.5]], "confidence": 0.85}}'
-#         cases.append((tc_id, payload, "recovered"))
-# 
-#     # --- Group 3: 15 Dynamic Kinematic Speed Limits Violations ---
-#     for i in range(36, 51):
-#         tc_id = f"TC-ALL-{str(i).zfill(3)}"
-#         if i <= 47:
-#             # Bypasses workspace bounds but triggers manageable kinematic scaling (0.9 rad/s)
-#             payload = f'{{"action": "MOVE", "waypoints": [[0.9, 0.0, 0.0]], "confidence": 0.95}}'
-#             cases.append((tc_id, payload, "recovered"))
-#         else:
-#             # Perfectly legal workspace bounds, but aggressive multi-step reversal forces uncorrectable velocity
-#             payload = f'{{"action": "MOVE", "waypoints": [[1.0, 0.0, 0.0], [-1.0, 0.0, 0.0]], "confidence": 0.95}}'
-#             cases.append((tc_id, payload, "fallback"))
-# 
-#     return cases
-# 
-# # =====================================================================
-# # 3. INDIVIDUAL PARAMETRIZED TEST SUITE RUNNER
-# # =====================================================================
-# 
-# def mock_vlm_reprompt(bad_raw, error_msg):
-#     if "CRITICAL_SYSTEM_MALFUNCTION" in bad_raw:
-#         return ""
-#     return '{"action": "MOVE", "waypoints": [[0.5, 0.0, 0.5]], "confidence": 0.95}'
-# 
-# harm_pipeline = HARM(mock_vlm_reprompt_fn=mock_vlm_reprompt)
-# start_state = RobotState(positions=[0.0, 0.0], timestamp=0.0)
-# 
-# @pytest.mark.parametrize("tc_id, raw_input, expected_catch", generate_50_test_cases())
-# def test_individual_harm_vectors(tc_id, raw_input, expected_catch):
-#     """Evaluates each adversarial vector as an independent test target without global state leaks."""
-#     cmd, receipt = harm_pipeline.validate(raw_input, start_state)
-#     assert receipt.catch_type == expected_catch, f"{tc_id} failed. Expected {expected_catch}, got {receipt.catch_type}"
+%%writefile test_harm_master_suite.py
+import pytest
+import json
+import math
+from typing import List, Tuple, Literal, Optional
+from pydantic import BaseModel, Field, ValidationError
+ 
+# =====================================================================
+# 1. HARM SYSTEM ARCHITECTURE IMPLEMENTATION
+# =====================================================================
+
+class RobotState:
+    def __init__(self, positions: List[float], timestamp: float):
+        self.positions = positions
+        self.timestamp = timestamp
+
+class VLMCommand(BaseModel):
+    action: str = Field(..., description="Action directive keyword (e.g., MOVE, HOLD)")
+    waypoints: List[List[float]] = Field(..., description="List of 3D spatial points [X, Y, Z]")
+    confidence: float = Field(..., description="Model certainty metric between 0.0 and 1.0")
+
+class HARMResult(BaseModel):
+    stage_failed: str = Field(default="NONE")
+    error_type: str = Field(default="NONE")
+    correction_applied: float = Field(default=0.0)
+    catch_type: Literal["none", "intercepted", "recovered", "fallback"] = Field(...)
+
+class Stage1Schema:
+    def __init__(self, mock_vlm_reprompt_fn=None):
+        self.mock_vlm_reprompt_fn = mock_vlm_reprompt_fn
+
+    def clean_and_validate(self, raw_response: str) -> Tuple[Optional[VLMCommand], bool, str]:
+        cleaned = raw_response.strip()
+        if cleaned.startswith("```"):
+            cleaned = cleaned.split("\n", 1)[-1]
+        if cleaned.endswith("```"):
+            cleaned = cleaned.rsplit("\n", 1)[0]
+        cleaned = cleaned.strip("`").strip()
+
+        try:
+            data = json.loads(cleaned)
+            cmd = VLMCommand.model_validate(data)
+            return cmd, False, "Success"
+        except (json.JSONDecodeError, ValidationError) as e:
+            return None, True, str(e)
+
+    def validate(self, raw_response: str) -> Tuple[Optional[VLMCommand], Literal["none", "intercepted", "fallback"], str]:
+        cmd, failed, err_details = self.clean_and_validate(raw_response)
+        if not failed:
+            return cmd, "none", "NONE"
+
+        if self.mock_vlm_reprompt_fn:
+            recovered_raw = self.mock_vlm_reprompt_fn(raw_response, err_details)
+            if not recovered_raw:
+                return None, "fallback", "STAGE_1_HARD_CRASH"
+
+            recovered_cmd, rec_failed, rec_err = self.clean_and_validate(recovered_raw)
+            if not rec_failed:
+                return recovered_cmd, "intercepted", "NONE"
+
+        return None, "fallback", "STAGE_1_FAILED"
+
+class Stage2Workspace:
+    def __init__(self, r_min: float = 0.2, r_max: float = 1.0):
+        self.r_min = r_min
+        self.r_max = r_max
+
+    def is_reachable(self, point: List[float]) -> bool:
+        if len(point) != 3:
+            return False
+        x, y, z = point
+        dist = math.sqrt(x**2 + y**2 + z**2)
+        return self.r_min <= dist <= self.r_max
+
+    def clip_to_boundary(self, point: List[float]) -> Tuple[List[float], float]:
+        x, y, z = point if len(point) == 3 else (point[0], point[1], 0.0)
+        dist = math.sqrt(x**2 + y**2 + z**2)
+        if dist == 0:
+            return [0.0, 0.0, self.r_min], self.r_min
+
+        target_r = self.r_min if dist < self.r_min else self.r_max
+        scale = target_r / dist
+        clipped = [x * scale, y * scale, z * scale]
+        corr_dist = math.sqrt(sum((o - c)**2 for o, c in zip([x,y,z], clipped)))
+        return clipped, corr_dist
+
+    def validate(self, command: VLMCommand) -> Tuple[VLMCommand, float, bool]:
+        max_correction = 0.0
+        corrected_waypoints = []
+        high_severity_triggered = False
+
+        for wp in command.waypoints:
+            if self.is_reachable(wp):
+                corrected_waypoints.append(wp)
+            else:
+                clipped_wp, corr_dist = self.clip_to_boundary(wp)
+                corrected_waypoints.append(clipped_wp)
+                max_correction = max(max_correction, corr_dist)
+                if corr_dist > 0.5:
+                    high_severity_triggered = True
+
+        new_command = VLMCommand(
+            action=command.action,
+            waypoints=corrected_waypoints,
+            confidence=command.confidence
+        )
+        return new_command, max_correction, high_severity_triggered
+
+class Stage3Kinematics:
+    URDF_MAX_VELOCITY = 1.0
+
+    def __init__(self, num_joints: int = 2):
+        self.num_joints = num_joints
+        self.velocity_ceiling = self.URDF_MAX_VELOCITY * 0.8  # 0.8 rad/s
+
+    def _calculate_max_velocity(self, trajectory: List[List[float]], dt: float) -> float:
+        max_vel = 0.0
+        for i in range(len(trajectory) - 1):
+            curr_pos = trajectory[i]
+            next_pos = trajectory[i + 1]
+            for j in range(min(self.num_joints, len(curr_pos), len(next_pos))):
+                vel = abs(next_pos[j] - curr_pos[j]) / dt
+                max_vel = max(max_vel, vel)
+        return max_vel
+
+    def check_and_scale(self, command: VLMCommand, last_state: RobotState) -> Tuple[Optional[List[List[float]]], float, bool]:
+        trajectory = [last_state.positions] + command.waypoints
+        segment_dt = 1.0
+
+        max_v = self._calculate_max_velocity(trajectory, segment_dt)
+        if max_v <= self.velocity_ceiling:
+            return command.waypoints, max_v, False
+
+        print(f"⚠️ Kinematic breach detected: {max_v:.3f} rad/s. Scaling time execution...")
+        mitigated_dt = segment_dt * 2.0
+        scaled_max_v = self._calculate_max_velocity(trajectory, mitigated_dt)
+
+        if scaled_max_v <= self.velocity_ceiling:
+            return command.waypoints, scaled_max_v, True
+
+        return None, scaled_max_v, True
+
+class HARM:
+    def __init__(self, mock_vlm_reprompt_fn=None):
+        self.stage1 = Stage1Schema(mock_vlm_reprompt_fn)
+        self.stage2 = Stage2Workspace()
+        self.stage3 = Stage3Kinematics()
+
+    def validate(self, raw_response: str, last_state: RobotState) -> Tuple[VLMCommand, HARMResult]:
+        cmd, s1_catch, s1_err = self.stage1.validate(raw_response)
+
+        if s1_catch == "fallback":
+            return VLMCommand(action="hold", waypoints=[last_state.positions], confidence=0.0), HARMResult(
+                stage_failed="STAGE_1", error_type="JSON_OR_VALIDATION_ERROR", catch_type="fallback"
+            )
+
+        cmd, s2_correction, s2_high_severity = self.stage2.validate(cmd)
+        final_waypoints, s3_vel, s3_scaled = self.stage3.check_and_scale(cmd, last_state)
+
+        if final_waypoints is None:
+            return VLMCommand(action="hold", waypoints=[last_state.positions], confidence=0.0), HARMResult(
+                stage_failed="STAGE_3", error_type="VELOCITY_LIMIT_BREACH", correction_applied=s3_vel, catch_type="fallback"
+            )
+
+        if s1_catch == "intercepted":
+            catch_type = "intercepted"
+        elif s2_correction > 0.0 or s3_scaled:
+            catch_type = "recovered"
+        else:
+            catch_type = "none"
+
+        result = HARMResult(
+            stage_failed="NONE",
+            error_type="NONE",
+            correction_applied=max(s2_correction, s3_vel if s3_scaled else 0.0),
+            catch_type=catch_type
+        )
+        return cmd, result
+
+# =====================================================================
+# 2. GENERATION OF THE 50 COMBINATORIAL ADVERSARIAL CASES
+# =====================================================================
+
+def generate_50_test_cases() -> List[Tuple[str, str, str]]:
+    """Generates 50 strict adversarial strings mapped to target catch types."""
+    cases = []
+
+    # --- Group 1: 15 Schema Level Anomalies ---
+    for i in range(1, 16):
+        tc_id = f"TC-ALL-{str(i).zfill(3)}"
+        if i <= 12:
+            if i % 2 == 0:
+                payload = f'{{"action": "MOVE", "waypoints": [[0.4, 0.0]], "confidence": "HIGH_CORRUPTED_STRING"}}'
+            else:
+                payload = f'{{"action": "MOVE", "waypoints": [[0.4, 0.0, 0.4]] "confidence": 0.95}}'
+            cases.append((tc_id, payload, "intercepted"))
+        else:
+            cases.append((tc_id, "CRITICAL_SYSTEM_MALFUNCTION_EMPTY_STRING", "fallback"))
+
+    # --- Group 2: 20 Spatial Workspace Breach Anomalies ---
+    for i in range(16, 36):
+        tc_id = f"TC-ALL-{str(i).zfill(3)}"
+        if i % 2 == 0:
+            payload = f'{{"action": "MOVE", "waypoints": [[1.05, 0.0, 0.0]], "confidence": 0.9}}'
+        else:
+            payload = f'{{"action": "MOVE", "waypoints": [[2.5, 0.0, 0.5]], "confidence": 0.85}}'
+        cases.append((tc_id, payload, "recovered"))
+
+    # --- Group 3: 15 Dynamic Kinematic Speed Limits Violations ---
+    for i in range(36, 51):
+        tc_id = f"TC-ALL-{str(i).zfill(3)}"
+        if i <= 47:
+            # Bypasses workspace bounds but triggers manageable kinematic scaling (0.9 rad/s)
+            payload = f'{{"action": "MOVE", "waypoints": [[0.9, 0.0, 0.0]], "confidence": 0.95}}'
+            cases.append((tc_id, payload, "recovered"))
+        else:
+            # Perfectly legal workspace bounds, but aggressive multi-step reversal forces uncorrectable velocity
+            payload = f'{{"action": "MOVE", "waypoints": [[1.0, 0.0, 0.0], [-1.0, 0.0, 0.0]], "confidence": 0.95}}'
+            cases.append((tc_id, payload, "fallback"))
+
+    return cases
+
+# =====================================================================
+# 3. INDIVIDUAL PARAMETRIZED TEST SUITE RUNNER
+# =====================================================================
+
+def mock_vlm_reprompt(bad_raw, error_msg):
+    if "CRITICAL_SYSTEM_MALFUNCTION" in bad_raw:
+        return ""
+    return '{"action": "MOVE", "waypoints": [[0.5, 0.0, 0.5]], "confidence": 0.95}'
+
+harm_pipeline = HARM(mock_vlm_reprompt_fn=mock_vlm_reprompt)
+start_state = RobotState(positions=[0.0, 0.0], timestamp=0.0)
+
+ @pytest.mark.parametrize("tc_id, raw_input, expected_catch", generate_50_test_cases())
+def test_individual_harm_vectors(tc_id, raw_input, expected_catch):
+    """Evaluates each adversarial vector as an independent test target without global state leaks."""
+    cmd, receipt = harm_pipeline.validate(raw_input, start_state)
+    assert receipt.catch_type == expected_catch, f"{tc_id} failed. Expected {expected_catch}, got {receipt.catch_type}"
 
 !pytest test_harm_master_suite.py -v
