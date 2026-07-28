@@ -344,3 +344,9 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Created a simple single-frequency pipeline where each VLM call runs synchronously and immediately triggers motor IK execution with no async handling.
 * Tied VLM inference, HARM safety validation, and IK motor calculations together in a single sequential loop.
 * Ran a 10-second baseline test to record the real IK rate, showing the motor speed dropped to ~3.27 Hz because it has to wait for VLM network delays.
+
+
+## Day 2: Benchmark Harness
+* Developed an async harness to execute 60-second trial runs comparing single-frequency and dual-frequency controller architectures.
+* Logged real-time IK timestamps, VLM call timestamps, HARM safety intercepts, and command staleness deltas across both loops.
+* Validated dual-frequency performance, achieving ~93.71 Hz IK rate compared to the ~3.27 Hz baseline while maintaining low command staleness.
