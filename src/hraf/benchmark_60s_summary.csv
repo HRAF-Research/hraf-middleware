@@ -1,0 +1,3 @@
+system_name,duration_sec,total_vlm_calls,total_ik_ticks,effective_ik_hz,avg_staleness_sec
+Single-Frequency Baseline,60.23,197,197,3.27,0.306
+Dual-Frequency Async Engine,60.09,120,5631,93.71,0.25

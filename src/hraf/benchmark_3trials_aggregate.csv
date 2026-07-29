@@ -1,0 +1,3 @@
+system_name,mean_ik_hz,p95_command_staleness_sec,harm_overhead_ms,timeout_frequency_pct
+Dual-Frequency Async Engine,93.35666666666667,0.5065,0.17366666666666666,13.613333333333335
+Single-Frequency Baseline,3.0833333333333335,0.4957666666666667,0.22833333333333336,9.343333333333334
