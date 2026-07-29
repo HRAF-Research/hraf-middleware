@@ -350,3 +350,9 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Developed an async harness to execute 60-second trial runs comparing single-frequency and dual-frequency controller architectures.
 * Logged real-time IK timestamps, VLM call timestamps, HARM safety intercepts, and command staleness deltas across both loops.
 * Validated dual-frequency performance, achieving ~93.71 Hz IK rate compared to the ~3.27 Hz baseline while maintaining low command staleness.
+
+
+## Day 3: Run Benchmark × 3
+* Ran 3 independent trials per system across both Single-Frequency and Dual-Frequency architectures (6 total runs).
+* Profiled execution metrics to log mean IK Hz, P95 command staleness, HARM validation overhead, and timeout frequency.
+* Generated statistical summaries and exported benchmark_3trials_summary.csv and benchmark_3trials_aggregate.csv for analysis.
