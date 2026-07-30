@@ -356,3 +356,9 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Ran 3 independent trials per system across both Single-Frequency and Dual-Frequency architectures (6 total runs).
 * Profiled execution metrics to log mean IK Hz, P95 command staleness, HARM validation overhead, and timeout frequency.
 * Generated statistical summaries and exported benchmark_3trials_summary.csv and benchmark_3trials_aggregate.csv for analysis.
+
+
+## Day 4: Results Analysis
+* Constructed comparative performance summary tables benchmarking mean control frequency, latency sensitivity, and minimum frequency limits.
+* Generated combined timeline visualization plotting real-time IK control loop frequency for both architectures on a single chart.
+* Evaluated system speedup factor (44.89x) and authored a 300-word performance analysis detailing asynchronous thread decoupling dynamics.
