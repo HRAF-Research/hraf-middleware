@@ -368,3 +368,23 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Finalized core codebase artifacts including the BenchmarkHarness class and baseline execution scripts saved under src/hraf/benchmark.py
 * Exported multi-trial telemetry datasets generating comprehensive summary CSVs alongside the comparative IK frequency timeline plot.
 * Compiled final submission documentation featuring the comparative metrics table and the 300-word performance speedup analysis.
+
+
+## 📅 Week 11: Paper Drafting & Literature Synthesis
+
+## Day 1: Literature Review & Synthesis Notes
+* Completed technical literature review across four required foundational sources using the 4-part Standard Reading Template.
+* Extracted precise citation targets backing up ADCA's dual-frequency thread model and HARM's multi-stage functional safety design.
+* Mapped system architecture relationships comparing HARM's deterministic validation pipeline against baseline VLM predictive control methods
+
+
+## Day 2: System Architecture (Middleware / ADCA)
+* Drafted Section 4 (~500 words) detailing the architectural design rationale of the Asynchronous Decoupled Control Architecture (ADCA).
+* Formulated the dual-frequency decoupling mechanism, isolating low-frequency System-2 VLM planning ($2\text{--}5\text{ Hz}$) from high-frequency System-1 motor execution ($100\text{--}300\text{ Hz}$).
+* Specified the non-blocking StateBridge shared-memory queue grounded in PEP 3156 and defined the sub-$10\text{ ms}$ real-time local loop latency budget allocation.
+
+
+## Day 3: HARM Implementation Section
+* Drafted Section 5 (~400 words) defining the High-assurance Action Real-time Monitor (HARM) 3-stage inline safety pipeline.
+* Established the technical rationale for Kinematic Bounds, Dynamic Envelope Filtering, and Workspace Hazard Bounding based on IEC 61508 functional safety standards.
+* Defined the formal $C_{\text{HARM}}$ Catch Rate metric equation and detailed the 1,000-sample adversarial test suite methodology across four primary threat categories. 
