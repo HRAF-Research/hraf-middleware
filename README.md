@@ -380,11 +380,11 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 
 ## Day 2: System Architecture (Middleware / ADCA)
 * Drafted Section 4 (~500 words) detailing the architectural design rationale of the Asynchronous Decoupled Control Architecture (ADCA).
-* Formulated the dual-frequency decoupling mechanism, isolating low-frequency System-2 VLM planning ($2\text{--}5\text{ Hz}$) from high-frequency System-1 motor execution ($100\text{--}300\text{ Hz}$).
-* Specified the non-blocking StateBridge shared-memory queue grounded in PEP 3156 and defined the sub-$10\text{ ms}$ real-time local loop latency budget allocation.
+* Formulated the dual-frequency decoupling mechanism, isolating low-frequency System-2 VLM planning (2-5 Hz) from high-frequency System-1 motor execution (100-300 Hz).
+* Specified the non-blocking State Bridge shared-memory queue grounded in PEP 3156 and defined the sub-10 ms real-time local loop latency budget allocation.
 
 
 ## Day 3: HARM Implementation Section
 * Drafted Section 5 (~400 words) defining the High-assurance Action Real-time Monitor (HARM) 3-stage inline safety pipeline.
 * Established the technical rationale for Kinematic Bounds, Dynamic Envelope Filtering, and Workspace Hazard Bounding based on IEC 61508 functional safety standards.
-* Defined the formal $C_{\text{HARM}}$ Catch Rate metric equation and detailed the 1,000-sample adversarial test suite methodology across four primary threat categories. 
+* Defined the formal C HARM Catch Rate metric equation and detailed the 1,000-sample adversarial test suite methodology across four primary threat categories. 
