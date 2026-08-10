@@ -388,3 +388,14 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 * Drafted Section 5 (~400 words) defining the High-assurance Action Real-time Monitor (HARM) 3-stage inline safety pipeline.
 * Established the technical rationale for Kinematic Bounds, Dynamic Envelope Filtering, and Workspace Hazard Bounding based on IEC 61508 functional safety standards.
 * Defined the formal C HARM Catch Rate metric equation and detailed the 1,000-sample adversarial test suite methodology across four primary threat categories. 
+
+
+## Day 4: Results Section Contribution
+* Drafted Section 6 (~300 words) presenting comparative system performance benchmarks, throughput speedups, and safety evaluation results.
+* Constructed the ADCA benchmark comparative table demonstrating a 73.2x execution frequency speedup (300.3 Hz vs. 4.1 Hz synchronous baseline).
+* Quantified HARM's safety performance, logging a 100% catch rate (C_HARM = 100%) across adversarial tests with a minimal 0.85 ms processing latency overhead.
+
+## Day 5: Review, Revisions & GitHub Deliverables
+* Consolidated all 4 standard literature reading templates and the 3 written paper draft sections into a unified manuscript.  
+* Conducted supervisor review, incorporated feedback, and polished the manuscript layout and citations for formal submission.
+* Committed finalized artifacts to GitHub repository, including reading notes, Section 4 (ADCA), Section 5 (HARM), and Section 6 (Results) drafts.
