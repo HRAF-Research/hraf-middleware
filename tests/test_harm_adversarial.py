@@ -8,7 +8,6 @@ Original file is located at
 """
 
 # Commented out IPython magic to ensure Python compatibility.
-# %%writefile test_harm_adversarial.py
 # import pytest
 # import math
 # 
@@ -139,5 +138,3 @@ Original file is located at
 #     ])
 #     def test_object_cases(self, test_id, fault):
 #         assert False
-
-!pytest test_harm_adversarial.py -v
