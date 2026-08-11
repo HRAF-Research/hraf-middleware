@@ -115,7 +115,6 @@ if __name__ == "__main__":
     print("="*50)
 
 
-%%writefile test_harm_stage1.py
 import pytest
 import json
 import math
@@ -288,7 +287,6 @@ if __name__ == "__main__":
     print("🧪 Running Week 8 Stage 2 Adversarial Suite...")
     pytest.main(["-v", "test_harm_stage1.py"])
 
-!pytest test_harm_stage1.py -v
 
 """##**Stage 2: Workspace Check**"""
 
@@ -404,7 +402,6 @@ if __name__ == "__main__":
     print(f"🎁 Output Cleared Path Waypoints:\n{safe_command.waypoints}")
     print("="*65)
 
-%%writefile test_harm_stage2.py
 import pytest
 import math
 from typing import List, Tuple
@@ -514,7 +511,6 @@ def test_workspace_adversarial_suite(test_id, raw_waypoints, expected_severity, 
     for wp in output_command.waypoints:
         assert checker.is_reachable(wp) is True, f"{test_id} output a waypoint that remains out of bounds!"
 
-!pytest test_harm_stage2.py -v
 
 """##**Stage 3 — Kinematic Limits**"""
 
@@ -622,7 +618,6 @@ if __name__ == "__main__":
     res_b = gate.check(extreme_trajectory)
     print(f"Execution Result Status: {res_b.status} | Note: {res_b.note}")
 
-%%writefile test_harm_stage3.py
 import pytest
 from typing import List, Literal
 
@@ -699,7 +694,6 @@ def test_kinematic_adversarial_suite(test_id, trajectory_data, expected_status):
     result = gate.check(trajectory)
     assert result.status == expected_status, f"{test_id} failed. Expected {expected_status}, got {result.status}."
 
-!pytest test_harm_stage3.py -v
 
 """##**Conservative Fallback & Full Pipeline**"""
 
@@ -973,7 +967,6 @@ if __name__ == "__main__":
 
 """##**Full Adversarial Test Suite Run**"""
 
-%%writefile test_harm_master_suite.py
 import pytest
 import json
 import math
@@ -1212,5 +1205,3 @@ def test_individual_harm_vectors(tc_id, raw_input, expected_catch):
     """Evaluates each adversarial vector as an independent test target without global state leaks."""
     cmd, receipt = harm_pipeline.validate(raw_input, start_state)
     assert receipt.catch_type == expected_catch, f"{tc_id} failed. Expected {expected_catch}, got {receipt.catch_type}"
-
-!pytest test_harm_master_suite.py -v
