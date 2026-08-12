@@ -47,26 +47,7 @@ print(f"HARM Result: {harm_result}")
 
 The block diagram below illustrates the end-to-end data pipeline flow and interface boundaries across the VLM cognitive loop, HARM safety shield, StateBridge telemetry manager, and IK execution layer.
 
-```mermaid
-graph TD
-    %% Component Nodes
-    VLM[VLM Cognitive Engine]
-    HARM[HARM Safety Module]
-    SB[StateBridge Node]
-    IK[IK Execution Layer]
-    SIM[Simulator / Hardware]
-
-    %% Data Flow & Labeled Interfaces
-    SIM -->|Camera Frame Feed: RGB Image Matrix| VLM
-    VLM -->|Raw VLM Output: Target Coordinates JSON| HARM
-    HARM -->|Verified Safe Target: Validated Cartesian Coordinates| SB
-    SB -->|Telemetry Synchronized Target: Target Trajectory| IK
-    IK -->|Joint Commands: Radians / Torque Arrays| SIM
-
-    %% Error Handling Loops
-    HARM -.-|Fallback / Re-prompt Feedback| VLM
-    IK -.-|Singularity / Collision Fault| SB
-```
+<img width="1230" height="1404" alt="mermaid-diagram-2026-08-12-171123" src="https://github.com/user-attachments/assets/993e1b40-d0f7-4753-999d-ac53138b182a" />
 
 ### Interface Specifications
 
