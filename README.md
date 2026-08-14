@@ -71,6 +71,32 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 <img width="1632" height="207" alt="all test passed" src="https://github.com/user-attachments/assets/e6f7a73c-9b8b-4f03-85cf-78e0c7ca8b71" />
 
 ============================================================================================
+## 🗓️ Week 1: Python Engineering Fundamentals & Clean Code Practices
+
+## Day 1: Project Setup & Clean Code
+* Created the `hraf-middleware` GitHub repository with standard production layout (`src/hraf/`, `tests/`, `requirements.txt`, `README.md`).
+* Studied the Single Responsibility Principle and refactored a monolithic script into 5 modular, descriptive functions.
+* Added explicit type hints across all refactored Python function signatures.
+
+## Day 2: Type Hints & Dataclasses
+* Learned Python typing system (`List`, `Dict`, `Optional`, `Union`, `Tuple`) and `@dataclass` decorators.
+* Modeled an immutable, thread-safe `RobotState` dataclass (`position`, `orientation`, `joint_angles`, `timestamp`).
+* Built the `VLMCommand` dataclass containing `waypoints`, `obstacles`, `confidence`, and `raw_response`.
+
+## Day 3: Custom Exceptions & Error Handling
+* Studied Python exception hierarchy and designed custom error classes (`HRAFBaseError`, `VLMResponseError`, `WorkspaceViolationError`, `JSONParseError`, `KinematicFeasibilityError`).
+* Wrote conditional trigger functions to raise specific exceptions for distinct system failure modes.
+* Implemented clean `try/except/finally` blocks for error catching, logging, and explicit re-raising.
+
+## Day 4: pytest & Unit Testing
+* Installed `pytest` and set up `tests/test_data_models.py` to validate core dataclass behavior.
+* Applied `pytest` fixtures and `@pytest.mark.parametrize` to test valid inputs, bad types, and boundary cases.
+* Executed test suite using `pytest --tb=short` to verify test passes and interpret failures.
+
+## Day 5: Pydantic Validation
+* Studied Pydantic v2 primitives (`BaseModel`, `Field`, `@field_validator`, `ValidationError`).
+* Converted `VLMCommand` into a Pydantic model with strict field constraints (`confidence` $0.0-1.0$, `waypoints` minimum length $1$, `action` Literal enum).
+* Tested schema edge cases (out-of-bound confidence, missing fields, invalid types) to ensure `ValidationError` is correctly triggered.
 
 ## 🗓️ Week 2: Concurrency, Threads & The GIL
 
