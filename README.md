@@ -100,33 +100,33 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 
 ## 🗓️ Week 2: Concurrency, Threads & The GIL
 
-### Day 1: Thread Basics & OS Scheduling
+## Day 1: Thread Basics & OS Scheduling
 * **What I Studied:** Studied how threads work and learned about the **Global Interpreter Lock (GIL)**.
 * **What I Coded:** Wrote a Python script inside `threads_demo.ipynb` that runs 3 threads at the exact same time.
 * **What I Observed:** Noticed that the outputs from the threads shuffle and mix together in a random order every time the code runs. This happens because the Operating System's Thread Scheduler controls the exact timing, not our code.
 
 
-### Day 2: Race Conditions
+## Day 2: Race Conditions
 * **Created a Race Condition:** Set up two threads to increase a shared counter 10,000 times at the same time.
 * **Observed Data Errors:** Ran the script 10 times and watched the final total change every time, never reaching the expected 20,000 because threads overwrote each other.
 * **Fixed with a Lock:** Added `threading.Lock()` to force the threads to wait in line, making sure the final count hits exactly 20,000 every single run.
 * **Added Code Comments:** Wrote clear notes explaining how the computer's read-modify-write steps caused the race condition and why the lock fixed it.
 
 
-### Day 3: Thread Event & Signaling
+## Day 3: Thread Event & Signaling
 * **Studied Event Basics:** Learned how `threading.Event` works using `set()`, `clear()`, `wait()`, and `is_set()` to pause threads without wasting CPU power.
 * **Built a Stop Event Pattern:** Created a background thread that runs continuously and checks a flag to shut down safely when ordered.
 * **Built a Ready Event Pattern:** Synchronized two threads so that Thread A stops completely and waits until Thread B signals that it is ready to proceed.
 
 
-### Day 4: Thread-Safe Queues & Latency Management
+## Day 4: Thread-Safe Queues & Latency Management
 * **Studied Queue Basics:** Learned how `queue.Queue` works using `put()`, `get()`, `get_nowait()`, `task_done()`, `join()`, and `maxsize` to share data safely between threads.
 * **Built a Balanced Pipeline:** Created a system where a producer sends sensor data and a consumer processes it at the exact same speed.
 * **Tested Latency Accumulation:** Proved that if a producer sends data faster than a consumer can read it, the queue fills up with old, lagging data.
 * **Implemented Bounded Flush Semantics:** Programmed a limited queue that clears out and drops old data packets so the consumer always uses the newest information.
 
   
-### Day 5: Full Producer-Consumer Demo & Latency Log
+## Day 5: Full Producer-Consumer Demo & Latency Log
 * **Build:** Created a two-thread system where a slow AI camera sends commands every 0.5s and a fast motor checks them 100 times per second.
 * **Use:** Set up a `Queue(maxsize=1)` so the system throws away old, unread commands and instantly replaces them with the newest update.
 * **Log:** Recorded creation and reading times to prove that our pipeline sends information almost instantly with zero data lag.
@@ -134,7 +134,7 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 ============================================================================================
 ## 🗓️ Week 3: System Design Thinking & Software Architecture Patterns 
 
-### Day 1: Block Diagrams & Interfaces
+## Day 1: Block Diagrams & Interfaces
 * Read Section 4 of the HRAF Proposal document and built the HRAF Data Flow loop
 * For each box, wrote down its inputs (including data type and source), outputs (including data type and destination), and error states
 * Drew the full data flow on paper as well as digital: Simulator → VLM → HARM → IK → Simulator as a labeled diagram.
