@@ -413,3 +413,15 @@ Below is the automated pytest output verifying our Stage 3 validation rules. Thi
 ## Day 2: Handoff Documentation
 * **Created `HANDOFF.md`:** Drafted a comprehensive handoff document covering all 7 core sections:
 * **Verified Executable Code:** Tested and verified that every code snippet, imports block, and command example included across the entire handoff document runs without errors.
+
+
+## Day 3: Presentation Preparation
+* Prepared a 20-minute slide deck covering system architecture, key implementations, quantitative results, limitations, and future roadmap.
+* Set up and tested the live HARM demonstration in Construct RDS to showcase real-time interception of bad VLM payload injections.
+* Integrated core benchmark figures including the IK frequency timeline plot, HARM catch rate metrics table, and speedup factor analysis.
+
+
+## Day 4: Self-Assessment
+* Written a 1-page technical self-assessment highlighting core strengths in async safety design, current growth areas, and unclear concepts.
+* Proposed a specific Week 13–14 learning plan to deepen ROS 2 native packaging and dynamic URDF collision modeling skills.
+* Outlined independent HRAF task ownership goals for the upcoming research sprint.
